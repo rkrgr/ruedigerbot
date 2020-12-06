@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
+const config = require('./config.json');
 
 const soundsFolder = './sounds/';
 const sounds = new Map();
@@ -52,4 +53,4 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
 
-client.login('NzM3NjkxNDM0NDUwMjg4NjUw.XyBCrw.miJTnsBnOkavi1ukK2Pj7F21JQU');
+client.login(config.discord_token);
