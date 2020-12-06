@@ -7,13 +7,6 @@ const soundsFolder = './sounds/';
 const sounds = new Map();
 
 client.once('ready', () => {
-	fs.readdir(soundsFolder, (err, files) => {
-		const sortedFiles = files.sort();
-		sortedFiles.forEach(file => {
-			sounds.set(file.split('.')[0], file);
-		});
-	});
-
 	console.log('Ready!');
 });
 
@@ -24,15 +17,18 @@ client.on('message', message => {
 	}
 	else if(text == 'random') {
 		const chosenNum = getRandomInt(sounds.size);
-		const soundsArr = Array.from(sounds, ([id, value]) => (value));
+		const soundsArr = Array.from(sounds.values());
 		play(message.member.voice.channel, soundsFolder + soundsArr[chosenNum]);
 	}
 	else if(text == '!narre') {
 		const members = message.member.voice.channel.members;
-		const chosenNum = getRandomInt(members.size);
-		const membersArr = Array.from(members, ([id, value]) => (value));
-		membersArr[chosenNum].send('Du bist der Narre.');
-		console.log(membersArr[chosenNum]);
+		const membersArr = Array.from(members.values());
+		let chosenMember;
+		do {
+			chosenMember = membersArr[getRandomInt(members.size)];
+			chosenMember.user.send('Du bist der Narre.');
+		} while(chosenMember.user.bot);
+		console.log(chosenMember.user.username);
 	}
 	else if(text == '!commands') {
 		let commands = 'Liste der Befehle:\n';
@@ -52,5 +48,12 @@ async function play(voiceChannel, path) {
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
+
+fs.readdir(soundsFolder, (err, files) => {
+	const sortedFiles = files.sort();
+	sortedFiles.forEach(file => {
+		sounds.set(file.split('.')[0], file);
+	});
+});
 
 client.login(config.discord_token);
