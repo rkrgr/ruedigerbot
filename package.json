@@ -1,0 +1,21 @@
+{
+  "name": "ruediger-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sackopeppler",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "@google-cloud/speech": "^4.1.1",
+    "discord.js": "^12.2.0",
+    "ffmpeg-static": "^4.2.6",
+    "node-wit": "^6.0.0",
+    "node-witai-speech": "^1.0.2",
+    "request": "^2.88.2",
+    "underscore": "^1.10.2"
+  }
+}
