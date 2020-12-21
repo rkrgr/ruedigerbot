@@ -20,15 +20,15 @@ client.on('message', message => {
 		const soundsArr = Array.from(sounds.values());
 		play(message.member.voice.channel, soundsFolder + soundsArr[chosenNum]);
 	}
-	else if(text == '!narre') {
+	else if(text == '!schütze') {
 		const members = message.member.voice.channel.members;
 		const membersArr = Array.from(members.values());
 		let chosenMember;
 		do {
 			chosenMember = membersArr[getRandomInt(members.size)];
-			chosenMember.user.send('Du bist der Narre.');
+			chosenMember.user.send('Du bist der Schütze. Drücke ein mal im Spiel den Knopf und wähle einen Spieler raus. Jeder Spieler muss sich deinem Vote anschließen.');
 		} while(chosenMember.user.bot);
-		console.log(chosenMember.user.username);
+		console.log('Der Schütze ist ' + chosenMember.user.username + '.');
 	}
 	else if(text == '!commands') {
 		let commands = 'Liste der Befehle:\n';
