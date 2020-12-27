@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
-const config = require('./config.json');
 
 const soundsFolder = './sounds/';
 const sounds = new Map();
@@ -58,4 +57,7 @@ fs.readdir(soundsFolder, (err, files) => {
 	});
 });
 
-client.login(config.discord_token);
+if (process.env.NODE_ENV !== 'production') {
+	require('dotenv').config();
+}
+client.login(process.env.DISCORD_TOKEN);
