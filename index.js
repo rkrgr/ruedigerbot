@@ -38,6 +38,8 @@ client.on('message', message => {
 		commands = commands.substring(0, commands.length - 2);
 		message.channel.send(commands);
 	}
+
+	require('./adventure/episode1/episode1').checkCommands(message, play);
 });
 
 async function play(voiceChannel, path) {
