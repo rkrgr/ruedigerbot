@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Labyrinth</title>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="800"></canvas>
+	<script>
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+		var playerX = 1;
+		var playerY = 1;
+
+		var obstacles = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+						 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+						 [1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+						 [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+						 [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+						 [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+						 [1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1],
+						 [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1],
+						 [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1],
+						 [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1],
+						 [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+						 [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1],
+						 [1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+						 [1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1],
+						 [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 1],
+						 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
+
+		draw();
+
+		document.addEventListener('keyup', e => {
+			console.log(e);
+			if (e.keyCode == '38') {
+				// up arrow
+				playerY--;
+			}
+			else if (e.keyCode == '40') {
+				// down arrow
+				playerY++;
+			}
+			else if (e.keyCode == '37') {
+				// left arrow
+				playerX--;
+			}
+			else if (e.keyCode == '39') {
+				// right arrow
+				playerX++;
+			}
+			update();
+			draw();
+		});
+
+		function update() {
+			var field = obstacles[playerY][playerX];
+			if(field == 3) {
+				// win
+			} else if(field == 1) {
+				// obstacle
+				playerY = 1;
+				playerX = 1;
+			}
+		}
+
+		function draw() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = "red";
+			ctx.fillRect(14 * 50, 14 * 50, 50, 50);
+			ctx.fillStyle = "black";
+			ctx.fillRect(playerX * 50, playerY * 50, 50, 50);
+		}
+
+	</script>
+</body>
+</html>
