@@ -5,6 +5,8 @@ const fs = require('fs');
 const soundsFolder = './sounds/';
 const sounds = new Map();
 
+const port = process.env.PORT || 80;
+
 client.once('ready', () => {
 	console.log('Ready!');
 });
@@ -63,4 +65,4 @@ if (process.env.NODE_ENV !== 'production') {
 client.login(process.env.DISCORD_TOKEN);
 
 const app = require('./app');
-app.start();
+app.start(port);
