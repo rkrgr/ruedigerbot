@@ -7,4 +7,8 @@ app.get('/labyrinth', (req, res) => {
 	res.sendFile('./adventure/episode2/labyrinth.html', { root: __dirname });
 });
 
-app.listen(port, () => console.log(`listening on port ${port}!`));
+function start() {
+	app.listen(port, () => console.log(`listening on port ${port}!`));
+}
+
+exports.start = start;
