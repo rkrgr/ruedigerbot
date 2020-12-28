@@ -61,3 +61,6 @@ if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
 }
 client.login(process.env.DISCORD_TOKEN);
+
+const app = require('./app');
+app.start();
