@@ -1,9 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
+const express = require('express');
 
 const soundsFolder = './sounds/';
 const sounds = new Map();
+
+let episode2;
 
 const port = process.env.PORT || 80;
 
@@ -41,6 +44,16 @@ client.on('message', message => {
 	}
 
 	require('./adventure/episode1/episode1').checkCommands(message, play);
+
+	if(text == 'install sprachmodul') {
+		const Episode2 = require('./adventure/episode2/episode2');
+		episode2 = new Episode2(message.member.voice.channel, message.channel, play);
+		episode2.start();
+	}
+
+	if(episode2 != null) {
+		episode2.checkCommands(text);
+	}
 });
 
 async function play(voiceChannel, path) {
@@ -64,5 +77,15 @@ if (process.env.NODE_ENV !== 'production') {
 }
 client.login(process.env.DISCORD_TOKEN);
 
-const app = require('./app');
-app.start(port);
+const app = express();
+
+app.get('/labyrinth', (req, res) => {
+	res.sendFile('./adventure/episode2/labyrinth.html', { root: __dirname });
+});
+
+app.get('/labyrinth_solved', (req, res) => {
+	episode2.labyrinthFinished();
+	res.send('Gelöst');
+});
+
+app.listen(port, () => console.log(`listening on port ${port}!`));
