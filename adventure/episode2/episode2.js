@@ -168,8 +168,8 @@ module.exports = class Episode2 {
 			setTimeout(() => {
 				this.textChannel.send('', {
 					files: [{
-						attachment: __dirname + '/zahlenfeld.png',
-						name: 'zahlenfeld.png',
+						attachment: __dirname + '/deckel.png',
+						name: 'deckel.png',
 					}],
 				});
 			}, 22000);
