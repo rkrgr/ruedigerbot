@@ -148,34 +148,34 @@ module.exports = class Episode2 {
 					}],
 				});
 			}, 14000);
-			if(command == '5 3 0 8 1 7 6 2 7 5') {
-				this.play(this.voiceChannel, __dirname + '/aufzugFahrt1.mp3');
-				setTimeout(() => {
-					this.textChannel.send('', {
-						files: [{
-							attachment: __dirname + '/kreuzworträtsel.jpg',
-							name: 'kreuzworträtsel.jpg',
-						}],
-					});
-				}, 45000);
-			}
-			if(command == 'franziska') {
-				this.play(this.voiceChannel, __dirname + '/aufzugFahrt2.mp3');
-			}
-			if(command == 'hold op') {
-				this.play(this.voiceChannel, __dirname + '/aufzugAusgang.mp3');
-				setTimeout(() => {
-					this.textChannel.send('', {
-						files: [{
-							attachment: __dirname + '/zahlenfeld.png',
-							name: 'zahlenfeld.png',
-						}],
-					});
-				}, 22000);
-			}
-			if(command == '3 7 9 1 2 11 5 10 4 6 8 x') {
-				this.play(this.voiceChannel, __dirname + '/ende.mp3');
-			}
+		}
+		if(command == '5 3 0 8 1 7 6 2 7 5') {
+			this.play(this.voiceChannel, __dirname + '/aufzugFahrt1.mp3');
+			setTimeout(() => {
+				this.textChannel.send('', {
+					files: [{
+						attachment: __dirname + '/kreuzworträtsel.jpg',
+						name: 'kreuzworträtsel.jpg',
+					}],
+				});
+			}, 45000);
+		}
+		if(command == 'franziska') {
+			this.play(this.voiceChannel, __dirname + '/aufzugFahrt2.mp3');
+		}
+		if(command == 'hold op') {
+			this.play(this.voiceChannel, __dirname + '/aufzugAusgang.mp3');
+			setTimeout(() => {
+				this.textChannel.send('', {
+					files: [{
+						attachment: __dirname + '/zahlenfeld.png',
+						name: 'zahlenfeld.png',
+					}],
+				});
+			}, 22000);
+		}
+		if(command == '3 7 9 1 2 11 5 10 4 6 8 x') {
+			this.play(this.voiceChannel, __dirname + '/ende.mp3');
 		}
 	}
 
