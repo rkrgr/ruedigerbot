@@ -4,8 +4,8 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-	"start": "node bot.js",
-	"startweb": "node app.js",
+    "start": "node bot.js",
+    "startweb": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sackopeppler",
