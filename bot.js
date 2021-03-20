@@ -5,12 +5,18 @@ const express = require('express');
 
 const soundsFolder = './sounds/';
 const sounds = new Map();
+let welcomesounds = new Map();
 
 let episode2;
 
 const port = process.env.PORT || 80;
 
 client.once('ready', () => {
+	const welcomesoundsData = JSON.parse(fs.readFileSync('welcomesounds.json'));
+	if(Object.keys(welcomesoundsData).length > 0) {
+		welcomesounds = new Map(welcomesoundsData);
+	}
+
 	console.log('Ready!');
 });
 
@@ -42,6 +48,28 @@ client.on('message', message => {
 		commands = commands.substring(0, commands.length - 2);
 		message.channel.send(commands);
 	}
+	else if(text.startsWith('!welcomesound')) {
+		const soundname = text.split(' ')[1];
+
+		if(sounds.get(soundname) == undefined) {
+			message.channel.send('Sound mit dem Namen "' + soundname + '" nicht bekannt.');
+		}
+		else {
+			welcomesounds.set(message.author.id, soundname);
+
+			const json = JSON.stringify([...welcomesounds]);
+			console.log(json);
+			fs.writeFile('./welcomesounds.json', json, (err) => {
+				if (err) {
+					console.error(err);
+					throw err;
+				}
+
+				console.log('Saved data to file.');
+				message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
+			});
+		}
+	}
 
 	require('./adventure/episode1/episode1').checkCommands(message, play);
 
@@ -53,6 +81,18 @@ client.on('message', message => {
 
 	if(episode2 != null) {
 		episode2.checkCommands(text);
+	}
+});
+
+client.on('voiceStateUpdate', (oldState, newState) => {
+	const oldVoice = oldState.channelID;
+	const newVoice = newState.channelID;
+
+	if(oldVoice == null && newVoice != null) {
+		const soundname = welcomesounds.get(newState.member.user.id);
+		if(soundname !== undefined) {
+			play(newState.member.voice.channel, soundsFolder + sounds.get(soundname));
+		}
 	}
 });
 
