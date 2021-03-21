@@ -3,6 +3,21 @@ const client = new Discord.Client();
 const fs = require('fs');
 const express = require('express');
 
+if (process.env.NODE_ENV !== 'production') {
+	require('dotenv').config();
+}
+
+const AWS = require('aws-sdk');
+const S3_BUCKET = process.env.S3_BUCKET;
+console.log(process.env.S3_BUCKET);
+const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
+AWS.config.region = 'eu-central-1';
+const s3 = new AWS.S3({
+	accessKeyId: S3_ACCESS_KEY_ID,
+	secretAccessKey: S3_SECRET_ACCESS_KEY,
+});
+
 const soundsFolder = './sounds/';
 const sounds = new Map();
 let welcomesounds = new Map();
@@ -12,11 +27,7 @@ let episode2;
 const port = process.env.PORT || 80;
 
 client.once('ready', () => {
-	const welcomesoundsData = JSON.parse(fs.readFileSync('welcomesounds.json'));
-	if(Object.keys(welcomesoundsData).length > 0) {
-		welcomesounds = new Map(welcomesoundsData);
-	}
-
+	loadWelcomesoundFile();
 	console.log('Ready!');
 });
 
@@ -58,16 +69,9 @@ client.on('message', message => {
 			welcomesounds.set(message.author.id, soundname);
 
 			const json = JSON.stringify([...welcomesounds]);
-			console.log(json);
-			fs.writeFile('./welcomesounds.json', json, (err) => {
-				if (err) {
-					console.error(err);
-					throw err;
-				}
 
-				console.log('Saved data to file.');
-				message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
-			});
+			uploadWelcomesoundFile(json);
+			message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
 		}
 	}
 
@@ -105,6 +109,36 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
 
+function uploadWelcomesoundFile(fileContent) {
+	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds', Body: fileContent };
+
+	s3.putObject(params, function(err, data) {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			console.log("Successfully uploaded data to welcomesounds bucket");
+		}
+	});
+}
+
+function loadWelcomesoundFile() {
+	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds' };
+
+	s3.getObject(params, (err, data) => {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			const welcomesoundsData = JSON.parse(data.Body.toString('utf-8'));
+			if(Object.keys(welcomesoundsData).length > 0) {
+				welcomesounds = new Map(welcomesoundsData);
+				console.log('Welcomesounds loaded.');
+			}
+		}
+	});
+}
+
 fs.readdir(soundsFolder, (err, files) => {
 	const sortedFiles = files.sort();
 	sortedFiles.forEach(file => {
@@ -112,9 +146,6 @@ fs.readdir(soundsFolder, (err, files) => {
 	});
 });
 
-if (process.env.NODE_ENV !== 'production') {
-	require('dotenv').config();
-}
 client.login(process.env.DISCORD_TOKEN);
 
 const app = express();
