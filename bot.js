@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
-const express = require('express');
 
 if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
@@ -9,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const AWS = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
-console.log(process.env.S3_BUCKET);
+
 const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
 const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
 AWS.config.region = 'eu-central-1';
@@ -21,10 +20,6 @@ const s3 = new AWS.S3({
 const soundsFolder = './sounds/';
 const sounds = new Map();
 let welcomesounds = new Map();
-
-let episode2;
-
-const port = process.env.PORT || 80;
 
 client.once('ready', () => {
 	loadWelcomesoundFile();
@@ -40,16 +35,6 @@ client.on('message', message => {
 		const chosenNum = getRandomInt(sounds.size);
 		const soundsArr = Array.from(sounds.values());
 		play(message.member.voice.channel, soundsFolder + soundsArr[chosenNum]);
-	}
-	else if(text == '!schütze') {
-		const members = message.member.voice.channel.members;
-		const membersArr = Array.from(members.values());
-		let chosenMember;
-		do {
-			chosenMember = membersArr[getRandomInt(members.size)];
-			chosenMember.user.send('Du bist der Schütze. Drücke ein mal im Spiel den Knopf und wähle einen Spieler raus. Jeder Spieler muss sich deinem Vote anschließen.');
-		} while(chosenMember.user.bot);
-		console.log('Der Schütze ist ' + chosenMember.user.username + '.');
 	}
 	else if(text == '!commands') {
 		let commands = 'Liste der Befehle:\n';
@@ -73,18 +58,6 @@ client.on('message', message => {
 			uploadWelcomesoundFile(json);
 			message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
 		}
-	}
-
-	require('./adventure/episode1/episode1').checkCommands(message, play);
-
-	if(text == 'install sprachmodul') {
-		const Episode2 = require('./adventure/episode2/episode2');
-		episode2 = new Episode2(message.member.voice.channel, message.channel, play);
-		episode2.start();
-	}
-
-	if(episode2 != null) {
-		episode2.checkCommands(text);
 	}
 });
 
@@ -147,16 +120,3 @@ fs.readdir(soundsFolder, (err, files) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-
-const app = express();
-
-app.get('/labyrinth', (req, res) => {
-	res.sendFile('./adventure/episode2/labyrinth.html', { root: __dirname });
-});
-
-app.get('/labyrinth_solved', (req, res) => {
-	episode2.labyrinthFinished();
-	res.send('Gelöst');
-});
-
-app.listen(port, () => console.log(`listening on port ${port}!`));
