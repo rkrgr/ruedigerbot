@@ -112,12 +112,12 @@ function getRandomInt(max) {
 function uploadWelcomesoundFile(fileContent) {
 	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds', Body: fileContent };
 
-	s3.putObject(params, function(err, data) {
+	s3.putObject(params, function(err) {
 		if (err) {
 			console.log(err);
 		}
 		else {
-			console.log("Successfully uploaded data to welcomesounds bucket");
+			console.log('Successfully uploaded data to welcomesounds bucket');
 		}
 	});
 }
