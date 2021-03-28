@@ -30,15 +30,7 @@ client.once('ready', () => {
 
 client.on('message', message => {
 	const text = message.content.toLowerCase();
-	if(text == '!commands') {
-		/*let commands = 'Liste der Befehle:\n';
-		sounds.forEach((value, key) => {
-			commands += key + ', ';
-		});
-		commands = commands.substring(0, commands.length - 2);
-		message.channel.send(commands);*/
-	}
-	else if(text.startsWith('!welcomesound')) {
+	if(text.startsWith('!welcomesound')) {
 		const soundname = text.split(' ')[1];
 
 		/*if(sounds.get(soundname) == undefined) {
