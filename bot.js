@@ -8,6 +8,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 const play = require('./src/soundplayer');
 
+const commandController = require('./src/commands/commandController');
+
 const AWS = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
 
@@ -19,8 +21,6 @@ const s3 = new AWS.S3({
 	secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
 
-const soundsFolder = './sounds/';
-const sounds = new Map();
 let welcomesounds = new Map();
 
 client.once('ready', () => {
@@ -30,36 +30,31 @@ client.once('ready', () => {
 
 client.on('message', message => {
 	const text = message.content.toLowerCase();
-	if(!text.startsWith('!') && sounds.has(text)) {
-		play(message.member.voice.channel, sounds.get(text));
-	}
-	else if(text == 'random') {
-		const chosenNum = getRandomInt(sounds.size);
-		const soundsArr = Array.from(sounds.values());
-		play(message.member.voice.channel, soundsArr[chosenNum]);
-	}
-	else if(text == '!commands') {
-		let commands = 'Liste der Befehle:\n';
+	if(text == '!commands') {
+		/*let commands = 'Liste der Befehle:\n';
 		sounds.forEach((value, key) => {
 			commands += key + ', ';
 		});
 		commands = commands.substring(0, commands.length - 2);
-		message.channel.send(commands);
+		message.channel.send(commands);*/
 	}
 	else if(text.startsWith('!welcomesound')) {
 		const soundname = text.split(' ')[1];
 
-		if(sounds.get(soundname) == undefined) {
+		/*if(sounds.get(soundname) == undefined) {
 			message.channel.send('Sound mit dem Namen "' + soundname + '" nicht bekannt.');
 		}
-		else {
+		else {*/
 			welcomesounds.set(message.author.id, soundname);
 
 			const json = JSON.stringify([...welcomesounds]);
 
 			uploadWelcomesoundFile(json);
 			message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
-		}
+		//}
+	}
+	else {
+		commandController.executeCommand(message);
 	}
 });
 
@@ -70,7 +65,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	if(oldVoice == null && newVoice != null) {
 		const soundname = welcomesounds.get(newState.member.user.id);
 		if(soundname !== undefined) {
-			play(newState.member.voice.channel, sounds.get(soundname));
+			play(newState.member.voice.channel, soundname);
 		}
 	}
 });
@@ -108,12 +103,5 @@ function loadWelcomesoundFile() {
 		}
 	});
 }
-
-fs.readdir(soundsFolder, (err, files) => {
-	const sortedFiles = files.sort();
-	sortedFiles.forEach(file => {
-		sounds.set(file.split('.')[0], file);
-	});
-});
 
 client.login(process.env.DISCORD_TOKEN);
