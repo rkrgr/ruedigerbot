@@ -6,6 +6,8 @@ if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
 }
 
+const play = require('./src/soundplayer');
+
 const AWS = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
 
@@ -29,12 +31,12 @@ client.once('ready', () => {
 client.on('message', message => {
 	const text = message.content.toLowerCase();
 	if(!text.startsWith('!') && sounds.has(text)) {
-		play(message.member.voice.channel, soundsFolder + sounds.get(text));
+		play(message.member.voice.channel, sounds.get(text));
 	}
 	else if(text == 'random') {
 		const chosenNum = getRandomInt(sounds.size);
 		const soundsArr = Array.from(sounds.values());
-		play(message.member.voice.channel, soundsFolder + soundsArr[chosenNum]);
+		play(message.member.voice.channel, soundsArr[chosenNum]);
 	}
 	else if(text == '!commands') {
 		let commands = 'Liste der Befehle:\n';
@@ -68,15 +70,10 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	if(oldVoice == null && newVoice != null) {
 		const soundname = welcomesounds.get(newState.member.user.id);
 		if(soundname !== undefined) {
-			play(newState.member.voice.channel, soundsFolder + sounds.get(soundname));
+			play(newState.member.voice.channel, sounds.get(soundname));
 		}
 	}
 });
-
-async function play(voiceChannel, path) {
-	const connection = await voiceChannel.join();
-	connection.play(path);
-}
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
