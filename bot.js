@@ -29,30 +29,9 @@ const s3 = new AWS.S3({
 	secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
 
-let welcomesounds = new Map();
-
 client.once('ready', () => {
-	loadWelcomesoundFile();
 	console.log('Ready!');
 });
-
-/*client.on('message', message => {
-	const text = message.content.toLowerCase();
-	if(text.startsWith('!welcomesound')) {
-		const soundname = text.split(' ')[1];
-
-			welcomesounds.set(message.author.id, soundname);
-
-			const json = JSON.stringify([...welcomesounds]);
-
-			uploadWelcomesoundFile(json);
-			message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
-
-	}
-	else {
-		commandController.executeCommand(message);
-	}
-});*/
 
 client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -80,10 +59,12 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	const newVoice = newState.channelID;
 
 	if(oldVoice == null && newVoice != null) {
-		const soundname = welcomesounds.get(newState.member.user.id);
-		if(soundname !== undefined) {
-			play(newState.member.voice.channel, soundname);
-		}
+		loadWelcomesoundFile(welcomesounds => {
+			const soundname = welcomesounds.get(newState.member.user.id);
+			if(soundname !== undefined) {
+				play(newState.member.voice.channel, soundname);
+			}
+		});
 	}
 });
 
@@ -91,20 +72,7 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
 
-function uploadWelcomesoundFile(fileContent) {
-	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds', Body: fileContent };
-
-	s3.putObject(params, function(err) {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			console.log('Successfully uploaded data to welcomesounds bucket');
-		}
-	});
-}
-
-function loadWelcomesoundFile() {
+function loadWelcomesoundFile(callback) {
 	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds' };
 
 	s3.getObject(params, (err, data) => {
@@ -114,9 +82,9 @@ function loadWelcomesoundFile() {
 		else {
 			const welcomesoundsData = JSON.parse(data.Body.toString('utf-8'));
 			if(Object.keys(welcomesoundsData).length > 0) {
-				welcomesounds = new Map(welcomesoundsData);
-				console.log('Welcomesounds loaded.');
+				callback(new Map(welcomesoundsData));
 			}
+			callback(new Map());
 		}
 	});
 }
