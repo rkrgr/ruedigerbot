@@ -5,6 +5,8 @@ if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
 }
 
+const s3 = require('./src/s3database');
+
 const play = require('./src/soundplayer');
 
 const client = new Discord.Client();
@@ -16,17 +18,6 @@ for (const file of commandFiles) {
 	const command = require(`./src/commands/${file}`);
 	client.commands.set(command.name, command);
 }
-
-const AWS = require('aws-sdk');
-const S3_BUCKET = process.env.S3_BUCKET;
-
-const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
-const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
-AWS.config.region = 'eu-central-1';
-const s3 = new AWS.S3({
-	accessKeyId: S3_ACCESS_KEY_ID,
-	secretAccessKey: S3_SECRET_ACCESS_KEY,
-});
 
 client.once('ready', () => {
 	console.log('Ready!');
@@ -58,30 +49,12 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	const newVoice = newState.channelID;
 
 	if(oldVoice == null && newVoice != null) {
-		loadWelcomesoundFile(welcomesounds => {
-			const soundname = welcomesounds.get(newState.member.user.id);
-			if(soundname !== undefined) {
-				play(newState.member.voice.channel, soundname);
+		s3.getWelcomeSound(newState.member.user.id).then(soundName => {
+			if(soundName) {
+				play(newState.member.voice.channel, soundName);
 			}
 		});
 	}
 });
-
-function loadWelcomesoundFile(callback) {
-	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds' };
-
-	s3.getObject(params, (err, data) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			const welcomesoundsData = JSON.parse(data.Body.toString('utf-8'));
-			if(Object.keys(welcomesoundsData).length > 0) {
-				callback(new Map(welcomesoundsData));
-			}
-			callback(new Map());
-		}
-	});
-}
 
 client.login(process.env.DISCORD_TOKEN);
