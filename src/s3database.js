@@ -14,6 +14,30 @@ async function getSounds() {
 	return data.Contents;
 }
 
+async function addSound(soundName, soundFile) {
+	const soundFileTokens = soundFile.split('.');
+	const fileType = soundFileTokens[soundFileTokens.length - 1];
+
+	const request = require('request');
+	request.get({ url: soundFile, encoding: null }, function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName + '.' + fileType, ACL: 'public-read', ContentType: 'audio/mp3' };
+			params.Body = body;
+
+			s3.upload (params, function(err, data) {
+				if (err) {
+					console.log('Error', err);
+				}
+				if (data) {
+					console.log('Upload Success', data.Location);
+				}
+			});
+		}
+	});
+
+
+}
+
 async function getWelcomeSounds() {
 	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds' };
 	const data = await s3.getObject(params).promise();
@@ -38,6 +62,7 @@ async function setWelcomeSound(userID, sound) {
 }
 
 exports.getSounds = getSounds;
+exports.addSound = addSound;
 exports.getWelcomeSounds = getWelcomeSounds;
 exports.getWelcomeSound = getWelcomeSound;
 exports.setWelcomeSound = setWelcomeSound;
