@@ -4,6 +4,7 @@ module.exports = {
 	name: 'play',
 	description: 'Play a sound.',
 	execute(message, args) {
-		play(message.member.voice.channel, args[0]);
+		const soundName = args[0];
+		play(message.member.voice.channel, soundName);
 	},
 };
