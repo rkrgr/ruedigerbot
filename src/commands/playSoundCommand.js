@@ -1,7 +1,9 @@
 const play = require('../soundplayer');
 
-function execute(member, text) {
-	play(member.voice.channel, text);
-}
-
-module.exports = execute;
+module.exports = {
+	name: 'play',
+	description: 'Play a sound.',
+	execute(message, args) {
+		play(message.member.voice.channel, args[0]);
+	},
+};

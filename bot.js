@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
 const fs = require('fs');
+const { prefix } = require('./config.json');
 
 if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
@@ -8,7 +8,15 @@ if (process.env.NODE_ENV !== 'production') {
 
 const play = require('./src/soundplayer');
 
-const commandController = require('./src/commands/commandController');
+const client = new Discord.Client();
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./src/commands/${file}`);
+	client.commands.set(command.name, command);
+}
 
 const AWS = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
@@ -28,25 +36,42 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.on('message', message => {
+/*client.on('message', message => {
 	const text = message.content.toLowerCase();
 	if(text.startsWith('!welcomesound')) {
 		const soundname = text.split(' ')[1];
 
-		/*if(sounds.get(soundname) == undefined) {
-			message.channel.send('Sound mit dem Namen "' + soundname + '" nicht bekannt.');
-		}
-		else {*/
 			welcomesounds.set(message.author.id, soundname);
 
 			const json = JSON.stringify([...welcomesounds]);
 
 			uploadWelcomesoundFile(json);
 			message.channel.send('Welcomesound "' + soundname + '" wurde für User "' + message.author.username + '" gesetzt.');
-		//}
+
 	}
 	else {
 		commandController.executeCommand(message);
+	}
+});*/
+
+client.on('message', message => {
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+	const args = message.content.slice(prefix.length).trim().split(/ +/);
+	const command = args.shift().toLowerCase();
+
+	try {
+		if (client.commands.has(command)) {
+			client.commands.get(command).execute(message, args);
+		}
+		else {
+			// try to play sound if command does not exist
+			client.commands.get('play').execute(message, [ command ]);
+		}
+	}
+	catch (error) {
+		console.error(error);
+		message.reply('there was an error trying to execute that command!');
 	}
 });
 

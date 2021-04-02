@@ -8,20 +8,22 @@ const s3 = new AWS.S3({
 	secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
 
-async function execute(channel) {
-	let commands = 'Liste der Befehle:\n';
-	const sounds = await getSounds();
-	sounds.filter(sound => !sound.Key.endsWith('/')).map(sound => sound.Key.split('/')[1].split('.')[0]).forEach(sound => {
-		commands += sound + ', ';
-	});
-	commands = commands.substring(0, commands.length - 2);
-	channel.send(commands);
-}
-
 async function getSounds() {
 	const params = { Bucket: S3_BUCKET, Prefix: 'sounds/' };
 	const data = await s3.listObjectsV2(params).promise();
 	return data.Contents;
 }
 
-module.exports = execute;
+module.exports = {
+	name: 'commands',
+	description: 'Shows commands in a list.',
+	async execute(message) {
+		let commands = 'Liste der Befehle:\n';
+		const sounds = await getSounds();
+		sounds.filter(sound => !sound.Key.endsWith('/')).map(sound => sound.Key.split('/')[1].split('.')[0]).forEach(sound => {
+			commands += sound + ', ';
+		});
+		commands = commands.substring(0, commands.length - 2);
+		message.channel.send(commands);
+	},
+};
