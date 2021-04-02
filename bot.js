@@ -68,10 +68,6 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	}
 });
 
-function getRandomInt(max) {
-	return Math.floor(Math.random() * Math.floor(max));
-}
-
 function loadWelcomesoundFile(callback) {
 	const params = { Bucket: S3_BUCKET, Key: 'welcomesounds' };
 
