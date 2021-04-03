@@ -35,7 +35,8 @@ client.on('message', message => {
 		}
 		else {
 			// try to play sound if command does not exist
-			client.commands.get('play').execute(message, [ command ]);
+			args.unshift(command);
+			client.commands.get('play').execute(message, args);
 		}
 	}
 	catch (error) {
@@ -51,7 +52,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	if(oldVoice == null && newVoice != null) {
 		s3.getWelcomeSound(newState.member.user.id).then(soundName => {
 			if(soundName) {
-				play(newState.member.voice.channel, soundName);
+				play(newState.member.voice.channel, [ soundName ]);
 			}
 		});
 	}
