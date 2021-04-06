@@ -2,13 +2,20 @@ const s3 = require('./s3database');
 
 async function play(voiceChannel, soundNames) {
 	try {
-		const connection = await voiceChannel.join();
+		const playlistName = soundNames[0];
+		const playlist = await s3.getPlaylist(playlistName);
+		if(playlist) {
+			soundNames = JSON.parse(playlist);
+		}
+
 		const sounds = await s3.getSounds();
 		const legitSoundNames = soundNames.filter(soundName => {
 			const namePart = soundName.split('(')[0];
 			const regex = new RegExp('\\/' + namePart + '\\.');
 			return sounds.find(sound => regex.test(sound.Key));
 		});
+
+		const connection = await voiceChannel.join();
 		playNextSound(connection, legitSoundNames, sounds);
 	}
 	catch(e) {

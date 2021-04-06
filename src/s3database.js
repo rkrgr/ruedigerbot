@@ -34,8 +34,6 @@ async function addSound(soundName, soundFile) {
 			});
 		}
 	});
-
-
 }
 
 async function getWelcomeSounds() {
@@ -61,8 +59,39 @@ async function setWelcomeSound(userID, sound) {
 	s3.putObject(params).promise();
 }
 
+async function getPlaylist(name) {
+	const params = { Bucket: S3_BUCKET, Key: 'playlists/' + name + '.json' };
+	return (await s3.getObject(params).promise()).Body;
+}
+
+function addPlaylist(name, sounds) {
+	const params = { Bucket: S3_BUCKET, Key: 'playlists/' + name + '.json', ACL: 'public-read' };
+	params.Body = JSON.stringify(sounds);
+
+	s3.upload (params, function(err, data) {
+		if (err) {
+			console.log('Error', err);
+		}
+		if (data) {
+			console.log('Upload Success', data.Location);
+		}
+	});
+}
+
+async function getPlaylists() {
+	const params = { Bucket: S3_BUCKET, Prefix: 'playlists/' };
+	const playlists = (await s3.listObjectsV2(params).promise()).Contents;
+	playlists.shift();
+	const playlistNames = playlists.map(playlist => playlist.Key.split('/')[1].split('.')[0]);
+	console.log(playlistNames)
+	return playlistNames;
+}
+
 exports.getSounds = getSounds;
 exports.addSound = addSound;
 exports.getWelcomeSounds = getWelcomeSounds;
 exports.getWelcomeSound = getWelcomeSound;
 exports.setWelcomeSound = setWelcomeSound;
+exports.getPlaylist = getPlaylist;
+exports.addPlaylist = addPlaylist;
+exports.getPlaylists = getPlaylists;
