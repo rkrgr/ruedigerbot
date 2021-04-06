@@ -89,7 +89,6 @@ async function getPlaylists() {
 	const playlists = (await s3.listObjectsV2(params).promise()).Contents;
 	playlists.shift();
 	const playlistNames = playlists.map(playlist => playlist.Key.split('/')[1].split('.')[0]);
-	console.log(playlistNames)
 	return playlistNames;
 }
 
