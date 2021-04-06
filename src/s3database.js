@@ -61,7 +61,13 @@ async function setWelcomeSound(userID, sound) {
 
 async function getPlaylist(name) {
 	const params = { Bucket: S3_BUCKET, Key: 'playlists/' + name + '.json' };
-	return (await s3.getObject(params).promise()).Body;
+	try {
+		const result = await s3.getObject(params).promise();
+		return result.Body;
+	}
+	catch (error) {
+		console.log(error);
+	}
 }
 
 function addPlaylist(name, sounds) {
