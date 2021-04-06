@@ -21,7 +21,7 @@ async function addSound(soundName, soundFile) {
 	const request = require('request');
 	request.get({ url: soundFile, encoding: null }, function(error, response, body) {
 		if (!error && response.statusCode == 200) {
-			const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName + '.' + fileType, ACL: 'public-read', ContentType: 'audio/mp3' };
+			const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName.toLowerCase() + '.' + fileType, ACL: 'public-read', ContentType: 'audio/mp3' };
 			params.Body = body;
 
 			s3.upload (params, function(err, data) {
@@ -71,7 +71,7 @@ async function getPlaylist(name) {
 }
 
 function addPlaylist(name, sounds) {
-	const params = { Bucket: S3_BUCKET, Key: 'playlists/' + name + '.json', ACL: 'public-read' };
+	const params = { Bucket: S3_BUCKET, Key: 'playlists/' + name.toLowerCase() + '.json', ACL: 'public-read' };
 	params.Body = JSON.stringify(sounds);
 
 	s3.upload (params, function(err, data) {
