@@ -5,6 +5,8 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const { nanoid } = require('nanoid');
 
+const path = require('path');
+
 const s3 = require('../s3database');
 const { playFromFile } = require('../soundplayer');
 
@@ -25,8 +27,8 @@ module.exports = {
 
 		const sound = await s3.getSound(edit.sound);
 
-		const tempFileNameInput = 'tempEditSoundIn' + nanoid() + '.mp3';
-		const tempFileNameOutput = 'tempEditSoundOut' + nanoid() + '.mp3';
+		const tempFileNameInput = path.join(__dirname, 'tempEditSoundIn' + nanoid() + '.mp3');
+		const tempFileNameOutput = path.join(__dirname, 'tempEditSoundOut' + nanoid() + '.mp3');
 
 		fs.writeFileSync(tempFileNameInput, sound);
 
