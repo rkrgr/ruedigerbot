@@ -1,4 +1,4 @@
-const play = require('../soundplayer');
+const { play } = require('../soundplayer');
 
 module.exports = {
 	name: 'play',

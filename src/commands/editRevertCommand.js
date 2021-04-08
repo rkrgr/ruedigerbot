@@ -1,0 +1,54 @@
+const fs = require('fs');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
+
+const { nanoid } = require('nanoid');
+
+const s3 = require('../s3database');
+const { playFromFile } = require('../soundplayer');
+
+module.exports = {
+	name: 'editrevert',
+	description: 'Reverts latest edit.',
+	async execute(message) {
+		const edit = await s3.getEdit(message.author.id);
+
+		edit.actions.pop();
+
+		let startSum = 0;
+		let endSum = 0;
+		edit.actions.forEach(a => {
+			startSum += a.start;
+			endSum += a.end;
+		});
+
+		const sound = await s3.getSound(edit.sound);
+
+		const tempFileNameInput = 'tempEditSoundIn' + nanoid() + '.mp3';
+		const tempFileNameOutput = 'tempEditSoundOut' + nanoid() + '.mp3';
+
+		fs.writeFileSync(tempFileNameInput, sound);
+
+		ffmpeg()
+			.input(tempFileNameInput)
+			.setStartTime(startSum + 'ms')
+			.output(tempFileNameOutput)
+			.on('end', async function() {
+				const dispatcher = await playFromFile(message.member.voice.channel, tempFileNameOutput);
+				dispatcher.on('close', () => {
+					fs.unlinkSync(tempFileNameInput);
+					fs.unlinkSync(tempFileNameOutput);
+				});
+				dispatcher.on('finish', () => {
+					fs.unlinkSync(tempFileNameInput);
+					fs.unlinkSync(tempFileNameOutput);
+				});
+			})
+			.on('error', function(err) {
+				console.log('error: ', err);
+			}).run();
+
+		s3.updateEdit(message.author.id, edit.actions);
+	},
+};

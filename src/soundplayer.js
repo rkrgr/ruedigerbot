@@ -23,6 +23,11 @@ async function play(voiceChannel, soundNames) {
 	}
 }
 
+async function playFromFile(voiceChannel, file) {
+	const connection = await voiceChannel.join();
+	return connection.play(file);
+}
+
 function playNextSound(connection, soundNames, sounds) {
 	const nextSound = soundNames.shift();
 	if(nextSound) {
@@ -49,4 +54,5 @@ function playNextSound(connection, soundNames, sounds) {
 	}
 }
 
-module.exports = play;
+exports.play = play;
+exports.playFromFile = playFromFile;

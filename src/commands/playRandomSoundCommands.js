@@ -1,4 +1,4 @@
-const play = require('../soundplayer');
+const { play } = require('../soundplayer');
 const s3 = require('../s3database');
 
 function getRandomInt(max) {

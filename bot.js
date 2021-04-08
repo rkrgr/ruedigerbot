@@ -7,7 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const s3 = require('./src/s3database');
 
-const play = require('./src/soundplayer');
+const { play } = require('./src/soundplayer');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();

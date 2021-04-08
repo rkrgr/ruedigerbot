@@ -1,3 +1,4 @@
+const fs = require('fs');
 const AWS = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
 const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
@@ -7,6 +8,17 @@ const s3 = new AWS.S3({
 	accessKeyId: S3_ACCESS_KEY_ID,
 	secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
+
+async function getSound(soundName) {
+	const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName + '.mp3' };
+	try {
+		const result = await s3.getObject(params).promise();
+		return result.Body;
+	}
+	catch (error) {
+		console.log(error);
+	}
+}
 
 async function getSounds() {
 	const params = { Bucket: S3_BUCKET, Prefix: 'sounds/' };
@@ -34,6 +46,15 @@ async function addSound(soundName, soundFile) {
 			});
 		}
 	});
+}
+
+async function addSoundFromFile(soundName, soundFile) {
+	const soundFileTokens = soundFile.split('.');
+	const fileType = soundFileTokens[soundFileTokens.length - 1];
+
+	const data = fs.readFileSync(soundFile);
+	const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName.toLowerCase() + '.' + fileType, ACL: 'public-read', ContentType: 'audio/mp3', Body: data };
+	return s3.upload(params).promise();
 }
 
 async function getWelcomeSounds() {
@@ -65,8 +86,8 @@ async function getPlaylist(name) {
 		const result = await s3.getObject(params).promise();
 		return result.Body;
 	}
-	catch (error) {
-		console.log(error);
+	catch {
+		return null;
 	}
 }
 
@@ -92,11 +113,62 @@ async function getPlaylists() {
 	return playlistNames;
 }
 
+async function addEdit(userID, soundName) {
+	const params = { Bucket: S3_BUCKET, Key: 'edits/' + userID };
+	params.Body = JSON.stringify({ sound: soundName, actions: [] });
+
+	s3.upload (params, function(err, data) {
+		if (err) {
+			console.log('Error', err);
+		}
+		if (data) {
+			console.log('Upload Success', data.Location);
+		}
+	});
+}
+
+async function getEdit(userID) {
+	const params = { Bucket: S3_BUCKET, Key: 'edits/' + userID };
+	try {
+		const result = await s3.getObject(params).promise();
+		return JSON.parse(result.Body);
+	}
+	catch (error) {
+		console.log(error);
+	}
+}
+
+async function updateEdit(userID, actions) {
+	const params = { Bucket: S3_BUCKET, Key: 'edits/' + userID };
+	const edit = await getEdit(userID);
+	params.Body = JSON.stringify({ sound: edit.sound, actions: actions });
+
+	s3.upload (params, function(err, data) {
+		if (err) {
+			console.log('Error', err);
+		}
+		if (data) {
+			console.log('Upload Success', data.Location);
+		}
+	});
+}
+
+async function deleteEdit(userID) {
+	const params = { Bucket: S3_BUCKET, Key: 'edits/' + userID };
+	return s3.deleteObject(params).promise();
+}
+
+exports.getSound = getSound;
 exports.getSounds = getSounds;
 exports.addSound = addSound;
+exports.addSoundFromFile = addSoundFromFile;
 exports.getWelcomeSounds = getWelcomeSounds;
 exports.getWelcomeSound = getWelcomeSound;
 exports.setWelcomeSound = setWelcomeSound;
 exports.getPlaylist = getPlaylist;
 exports.addPlaylist = addPlaylist;
 exports.getPlaylists = getPlaylists;
+exports.addEdit = addEdit;
+exports.getEdit = getEdit;
+exports.updateEdit = updateEdit;
+exports.deleteEdit = deleteEdit;
