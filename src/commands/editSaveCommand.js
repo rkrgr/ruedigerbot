@@ -35,8 +35,12 @@ module.exports = {
 			.output(tempFileNameOutput)
 			.on('end', async function() {
 				await s3.addSoundFromFile(edit.sound, tempFileNameOutput);
-				fs.unlinkSync(tempFileNameInput);
-				fs.unlinkSync(tempFileNameOutput);
+				if(fs.existsSync(tempFileNameInput)) {
+					fs.unlinkSync(tempFileNameInput);
+				}
+				if(fs.existsSync(tempFileNameOutput)) {
+					fs.unlinkSync(tempFileNameOutput);
+				}
 
 				s3.deleteEdit(message.author.id);
 				message.reply('Saved changes. Editing ended.');

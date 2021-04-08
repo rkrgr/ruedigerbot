@@ -39,12 +39,20 @@ module.exports = {
 			.on('end', async function() {
 				const dispatcher = await playFromFile(message.member.voice.channel, tempFileNameOutput);
 				dispatcher.on('close', () => {
-					fs.unlinkSync(tempFileNameInput);
-					fs.unlinkSync(tempFileNameOutput);
+					if(fs.existsSync(tempFileNameInput)) {
+						fs.unlinkSync(tempFileNameInput);
+					}
+					if(fs.existsSync(tempFileNameOutput)) {
+						fs.unlinkSync(tempFileNameOutput);
+					}
 				});
 				dispatcher.on('finish', () => {
-					fs.unlinkSync(tempFileNameInput);
-					fs.unlinkSync(tempFileNameOutput);
+					if(fs.existsSync(tempFileNameInput)) {
+						fs.unlinkSync(tempFileNameInput);
+					}
+					if(fs.existsSync(tempFileNameOutput)) {
+						fs.unlinkSync(tempFileNameOutput);
+					}
 				});
 			})
 			.on('error', function(err) {
