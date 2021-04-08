@@ -35,8 +35,8 @@ module.exports = {
 
 		const sound = await s3.getSound(edit.sound);
 
-		const tempFileNameInput = 'tempEditSoundIn' + nanoid() + '.mp3';
-		const tempFileNameOutput = 'tempEditSoundOut' + nanoid() + '.mp3';
+		const tempFileNameInput = './tempEditSoundIn' + nanoid() + '.mp3';
+		const tempFileNameOutput = './tempEditSoundOut' + nanoid() + '.mp3';
 
 		fs.writeFileSync(tempFileNameInput, sound);
 
