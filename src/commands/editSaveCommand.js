@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { getAudioDurationInSeconds } = require('get-audio-duration');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -29,9 +30,16 @@ module.exports = {
 
 		fs.writeFileSync(tempFileNameInput, sound);
 
+		let duration = (await getAudioDurationInSeconds(tempFileNameInput)) * 1000;
+
+		console.log(duration);
+
+		duration -= (startSum + endSum);
+
 		ffmpeg()
 			.input(tempFileNameInput)
 			.setStartTime(startSum + 'ms')
+			.setDuration(duration + 'ms')
 			.output(tempFileNameOutput)
 			.on('end', async function() {
 				await s3.addSoundFromFile(edit.sound, tempFileNameOutput);
