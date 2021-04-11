@@ -17,6 +17,7 @@
     "dotenv": "^8.2.0",
     "ffmpeg-static": "^4.2.7",
     "fluent-ffmpeg": "^2.1.2",
+    "get-audio-duration": "^2.0.3",
     "nanoid": "^3.1.22",
     "request": "^2.88.2",
     "underscore": "^1.10.2"
