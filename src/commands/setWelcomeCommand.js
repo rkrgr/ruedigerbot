@@ -6,7 +6,7 @@ module.exports = {
 	async execute(message, args) {
 		const soundName = args[0];
 
-		const sounds = await s3.getSounds();
+		const sounds = await s3.getSounds('sounds');
 		const soundNames = sounds.filter(sound => !sound.Key.endsWith('/')).map(sound => sound.Key.split('/')[1].split('.')[0]);
 
 		if(!soundNames.includes(soundName)) {

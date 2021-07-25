@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
 }
 
+
 const s3 = require('./src/s3database');
 
 const { play } = require('./src/soundplayer');
@@ -15,16 +16,24 @@ client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./src/commands/${file}`);
+  const command = require(`./src/commands/${file}`);
 	client.commands.set(command.name, command);
 }
+
+const adventure = require('./src/adventure/adventureController');
 
 client.once('ready', () => {
 	console.log('Ready!');
 });
 
 client.on('message', message => {
-	if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return;
+  if (message.author.bot) return;
+	if (!message.content.startsWith(process.env.PREFIX)) {
+    if(adventure.adventureIsActive) {
+      adventure.computeInput(message.content.trim());
+    }
+    return;
+  };
 
 	const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();

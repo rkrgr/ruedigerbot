@@ -20,8 +20,8 @@ async function getSound(soundName) {
 	}
 }
 
-async function getSounds() {
-	const params = { Bucket: S3_BUCKET, Prefix: 'sounds/' };
+async function getSounds(folder) {
+	const params = { Bucket: S3_BUCKET, Prefix: `${folder}/` };
 	const data = await s3.listObjectsV2(params).promise();
 	return data.Contents;
 }
