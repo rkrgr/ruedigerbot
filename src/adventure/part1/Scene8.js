@@ -37,8 +37,8 @@ class Scene8 {
   async play() {
     await soundplayer.play(this._voiceChannel, ['schrottplatz_anfang'], 'sounds_adventure');
     this._connection = await this._voiceChannel.join();
-    this.playBeepLoop(1000);
     this._beepActive = true;
+    this.playBeepLoop(1000);
   }
   
   async computeInput(message) {
@@ -83,14 +83,14 @@ class Scene8 {
         this._beepActive = false;
         this._currentTarget = obstacle2Pos;
         await soundplayer.play(this._voiceChannel, ['schrottplatz_mikrowelle'], 'sounds_adventure');
-        this.playBeepLoop(1000);
         this._beepActive = true;
+        this.playBeepLoop(1000);
       } else if(this.isPosEqual(this._currentTarget, obstacle2Pos)) {
         this._beepActive = false;
         this._currentTarget = ruedigerPos;
         await soundplayer.play(this._voiceChannel, ['schrottplatz_massage'], 'sounds_adventure');
-        this.playBeepLoop(1000);
         this._beepActive = true;
+        this.playBeepLoop(1000);
       } else if(this.isPosEqual(this._currentTarget, ruedigerPos)) {
         this._beepActive = false;
         await soundplayer.play(this._voiceChannel, ['schrottplatz_ruediger_gefunden'], 'sounds_adventure');
@@ -109,12 +109,14 @@ class Scene8 {
 
   async playBeepLoop(speed) {
     setTimeout(async () => {
-      const dispatcher = this._connection.play(beepFile);
-      dispatcher.on('finish', () => {
-        if(this._beepActive) {
-          this.playBeepLoop(this.distanceTo(this._currentTarget) * 1000);
-        }
-      });
+      if(this._beepActive) {
+        const dispatcher = this._connection.play(beepFile);
+        dispatcher.on('finish', () => {
+          if(this._beepActive) {
+            this.playBeepLoop(this.distanceTo(this._currentTarget) * 1000);
+          }
+        });
+      }
     }, speed);
   }
 }
