@@ -8,7 +8,7 @@ class Scene1 {
   }
 
   async play() {
-    // await soundplayer.play(this._voiceChannel, ['parkplatzStart'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['parkplatzStart'], 'sounds_adventure');
     this._done();
   }
 }
