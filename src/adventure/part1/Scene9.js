@@ -7,25 +7,26 @@ class Scene9 {
     this._done = done;
   }
 
-  play() {
-    // anfang sound spielen
-    this._textChannel.send('Form der Eingabe: 1 2 3 4 5');
-    soundplayer.playFromFile(this._voiceChannel, __dirname + '/morse.mp3');
-    this._intervalId = setInterval(() => {
-      soundplayer.playFromFile(this._voiceChannel, __dirname + '/morse.mp3');
-    }, 20000);
+  async play() {
+    await soundplayer.play(this._voiceChannel, ['parkplatz_schwarze_karte'], 'sounds_adventure');
+    this._textChannel.send('', {
+      files: [{
+        attachment: __dirname + '/karte_front.png',
+        name: 'karte_front.png',
+      },
+      {
+        attachment: __dirname + '/karte_schwarz.png',
+        name: 'karte_schwarz.png',
+      }],
+    });
   }
   
   async computeInput(message) {
-    if(message == '5 2 1 8 6') {
-      if(this._intervalId) {
-        clearInterval(this._intervalId);
-      }
-      // sound abspielen
+    if(message.toLowerCase() == 'fisch') {
+      await soundplayer.play(this._voiceChannel, ['ende'], 'sounds_adventure');
       this._done();
     }
   }
-
 }
 
 module.exports = Scene9;
