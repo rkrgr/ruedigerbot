@@ -9,6 +9,7 @@ class Scene9 {
 
   play() {
     // anfang sound spielen
+    this._textChannel.send('Form der Eingabe: 1 2 3 4 5');
     soundplayer.playFromFile(this._voiceChannel, __dirname + '/morse.mp3');
     this._intervalId = setInterval(() => {
       soundplayer.playFromFile(this._voiceChannel, __dirname + '/morse.mp3');
