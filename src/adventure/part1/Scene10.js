@@ -9,6 +9,16 @@ class Scene9 {
 
   async play() {
     await soundplayer.play(this._voiceChannel, ['parkplatz_schwarze_karte'], 'sounds_adventure');
+    this._textChannel.send('', {
+      files: [{
+        attachment: __dirname + '/karte_front.png',
+        name: 'karte_front.png',
+      },
+      {
+        attachment: __dirname + '/karte_schwarz.png',
+        name: 'karte_schwarz.png',
+      }],
+    });
   }
   
   async computeInput(message) {
