@@ -7,8 +7,8 @@ class Scene8 {
     this._done = done;
   }
 
-  play() {
-    // anfang sound spielen
+  async play() {
+    await soundplayer.play(this._voiceChannel, ['garage_kampf'], 'sounds_adventure');
     this._textChannel.send('Form der Eingabe: 1 2 3 4 5');
     soundplayer.playFromFile(this._voiceChannel, __dirname + '/morse.mp3');
     this._intervalId = setInterval(() => {
@@ -21,7 +21,7 @@ class Scene8 {
       if(this._intervalId) {
         clearInterval(this._intervalId);
       }
-      // sound abspielen
+      await soundplayer.play(this._voiceChannel, ['garage_gespraech'], 'sounds_adventure');
       this._done();
     }
   }

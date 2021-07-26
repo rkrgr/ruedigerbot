@@ -19,7 +19,7 @@ class Scene3 {
   async computeInput(message) {
       const input = message.split(' ');
       if(this.check(input)) {
-        // play fertig
+        await soundplayer.play(this._voiceChannel, ['garage_shutdown'], 'sounds_adventure');
         this._done();
       }
   }
