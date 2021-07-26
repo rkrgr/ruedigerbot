@@ -12,10 +12,10 @@ class Scene6 {
   }
   
   async computeInput(message) {
-    if(message.toLowerCase().contains('zylinder')) {
+    if(message.toLowerCase().includes('zylinder')) {
       soundplayer.play(this._voiceChannel, ['paul_raetsel'], 'sounds_adventure');
     }
-    if(message.toLowerCase().contains('mitte') || message.toLowerCase().contains('mittig') || message.toLowerCase().contains('zwischen')) {
+    if(message.toLowerCase().includes('mitte') || message.toLowerCase().includes('mittig') || message.toLowerCase().includes('zwischen')) {
       await soundplayer.play(this._voiceChannel, ['paul_ende'], 'sounds_adventure');
       this._done();
     }
