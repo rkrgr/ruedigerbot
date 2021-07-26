@@ -7,8 +7,8 @@ class Scene3 {
     this._done = done;
   }
 
-  play() {
-    // soundplayer.play(this._voiceChannel, ['parkplatz_frau'], 'sounds_adventure');
+  async play() {
+    await soundplayer.play(this._voiceChannel, ['baeckerei_anfang'], 'sounds_adventure');
 
     this._textChannel.send('', {
       files: [{
@@ -22,7 +22,7 @@ class Scene3 {
   async computeInput(message) {
     const input = message.split(' ').sort();
     if(input[0] == '1' && input[1] == '2' && input[2] == '8') {
-      // await soundplayer.play(this._voiceChannel, ['parkplatz_frau_richtig'], 'sounds_adventure');
+      await soundplayer.play(this._voiceChannel, ['baeckerei_ende'], 'sounds_adventure');
       this._done();
     }
   }
