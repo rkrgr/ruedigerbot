@@ -38,7 +38,7 @@ function playNextSound(connection, soundNames, sounds) {
       const regex = new RegExp('\\/' + namePart + '\\.');
       const soundKey = sounds.find(sound => regex.test(sound.Key)).Key;
       const dispatcher = connection.play('https://ruediger.s3.eu-central-1.amazonaws.com/' + soundKey);
-      if(soundSplit[1]) {
+      if(timePart) {
         dispatcher.on('start', () => {
           setTimeout(() => {
             dispatcher.end();
