@@ -59,7 +59,7 @@ function getSoundName(sound) {
 }
 
 function getSoundPlaytime(sound) {
-  const soundSplit = nextSound.split('(');
+  const soundSplit = sound.split('(');
   if(soundSplit[1]) {
     return parseFloat(soundSplit[1].split(')')[0]);
   }
