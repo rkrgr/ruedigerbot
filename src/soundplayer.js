@@ -33,12 +33,8 @@ function playNextSound(connection, soundNames, sounds) {
   return new Promise((resolve, reject) => {
     const nextSound = soundNames.shift();
     if(nextSound) {
-      const soundSplit = nextSound.split('(');
-      const namePart = soundSplit[0];
-      let timePart;
-      if(soundSplit[1]) {
-        timePart = parseFloat(soundSplit[1].split(')')[0]);
-      }
+      const namePart = getSoundName(nextSound);
+      const timePart = getSoundPlaytime(nextSound);
       const regex = new RegExp('\\/' + namePart + '\\.');
       const soundKey = sounds.find(sound => regex.test(sound.Key)).Key;
       const dispatcher = connection.play('https://ruediger.s3.eu-central-1.amazonaws.com/' + soundKey);
@@ -55,6 +51,19 @@ function playNextSound(connection, soundNames, sounds) {
       });
     }
   });
+}
+
+function getSoundName(sound) {
+  const soundSplit = sound.split('(');
+  return soundSplit[0];
+}
+
+function getSoundPlaytime(sound) {
+  const soundSplit = nextSound.split('(');
+  if(soundSplit[1]) {
+    return parseFloat(soundSplit[1].split(')')[0]);
+  }
+  return null;
 }
 
 exports.play = play;
