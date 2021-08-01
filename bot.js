@@ -29,7 +29,7 @@ client.once('ready', () => {
 client.on('message', message => {
   if (message.author.bot) return;
 	if (!message.content.startsWith(process.env.PREFIX)) {
-    if(adventure.adventureIsActive) {
+    if(adventure.adventureIsActive()) {
       adventure.computeInput(message.content.trim());
     }
     return;
