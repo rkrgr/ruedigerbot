@@ -45,8 +45,6 @@ module.exports = {
 
 		let duration = (await getAudioDurationInSeconds(tempFileNameInput)) * 1000;
 
-		console.log(duration);
-
 		duration -= (startSum + endSum);
 
 		ffmpeg()
