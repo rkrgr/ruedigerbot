@@ -8,7 +8,7 @@ class Scene9 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['parkplatz_schwarze_karte'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['parkplatz_schwarze_karte'], 'sounds_adventure/teil1');
     this._textChannel.send('', {
       files: [{
         attachment: __dirname + '/karte_front.png',
@@ -23,7 +23,7 @@ class Scene9 {
   
   async computeInput(message) {
     if(message.toLowerCase() == 'fisch') {
-      await soundplayer.play(this._voiceChannel, ['ende'], 'sounds_adventure');
+      await soundplayer.play(this._voiceChannel, ['ende'], 'sounds_adventure/teil1');
       this._done();
     }
   }

@@ -35,7 +35,7 @@ class Scene7 {
   }
   
   async play() {
-    await soundplayer.play(this._voiceChannel, ['schrottplatz_anfang'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['schrottplatz_anfang'], 'sounds_adventure/teil1');
     this._connection = await this._voiceChannel.join();
     this._beepActive = true;
     this.playBeepLoop(1000);
@@ -82,18 +82,18 @@ class Scene7 {
       if(this.isPosEqual(this._currentTarget, obstacle1Pos)) {
         this._beepActive = false;
         this._currentTarget = obstacle2Pos;
-        await soundplayer.play(this._voiceChannel, ['schrottplatz_mikrowelle'], 'sounds_adventure');
+        await soundplayer.play(this._voiceChannel, ['schrottplatz_mikrowelle'], 'sounds_adventure/teil1');
         this._beepActive = true;
         this.playBeepLoop(1000);
       } else if(this.isPosEqual(this._currentTarget, obstacle2Pos)) {
         this._beepActive = false;
         this._currentTarget = ruedigerPos;
-        await soundplayer.play(this._voiceChannel, ['schrottplatz_massage'], 'sounds_adventure');
+        await soundplayer.play(this._voiceChannel, ['schrottplatz_massage'], 'sounds_adventure/teil1');
         this._beepActive = true;
         this.playBeepLoop(1000);
       } else if(this.isPosEqual(this._currentTarget, ruedigerPos)) {
         this._beepActive = false;
-        await soundplayer.play(this._voiceChannel, ['schrottplatz_ruediger_gefunden'], 'sounds_adventure');
+        await soundplayer.play(this._voiceChannel, ['schrottplatz_ruediger_gefunden'], 'sounds_adventure/teil1');
         this._done();
       }
     }

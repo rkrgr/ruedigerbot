@@ -9,14 +9,15 @@ const s3 = new AWS.S3({
 	secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
 
-async function getSound(soundName) {
-	const params = { Bucket: S3_BUCKET, Key: 'sounds/' + soundName + '.mp3' };
+async function getSound(soundName, folder) {
+	const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}.mp3` };
 	try {
+    console.log(soundName, folder)
 		const result = await s3.getObject(params).promise();
 		return result.Body;
 	}
 	catch (error) {
-		console.log(error);
+		throw new Error(`Can't get sound ${soundName}.`);
 	}
 }
 

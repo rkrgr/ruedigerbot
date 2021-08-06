@@ -8,7 +8,7 @@ class Scene3 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['baeckerei_anfang'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['baeckerei_anfang'], 'sounds_adventure/teil1');
 
     this._textChannel.send('', {
       files: [{
@@ -22,7 +22,7 @@ class Scene3 {
   async computeInput(message) {
     const input = message.split(' ').sort();
     if(input[0] == '1' && input[1] == '2' && input[2] == '8') {
-      await soundplayer.play(this._voiceChannel, ['baeckerei_ende'], 'sounds_adventure');
+      await soundplayer.play(this._voiceChannel, ['baeckerei_ende'], 'sounds_adventure/teil1');
       this._done();
     }
   }

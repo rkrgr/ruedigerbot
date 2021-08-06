@@ -1,4 +1,5 @@
 const s3 = require('./s3database');
+const { Readable } = require('stream');
 
 async function play(voiceChannel, soundNames, folder = 'sounds') {
   try {
@@ -8,16 +9,11 @@ async function play(voiceChannel, soundNames, folder = 'sounds') {
       soundNames = JSON.parse(playlist);
     }
 
-    const sounds = await s3.getSounds(folder);
-
-    const legitSoundNames = soundNames.filter((soundName) => {
-      const namePart = soundName.split('(')[0];
-      const regex = new RegExp(`\\/${namePart}\\.`);
-      return sounds.find((sound) => regex.test(sound.Key));
-    });
-
     const connection = await voiceChannel.join();
-    await playNextSound(connection, legitSoundNames, sounds);
+
+    for(const soundName of soundNames) {
+      await playSound(connection, soundName, folder);
+    }
   } catch (e) {
     console.log(e);
   }
@@ -41,15 +37,13 @@ function getSoundPlaytime(sound) {
   return null;
 }
 
-function playNextSound(connection, soundNames, sounds) {
-  return new Promise((resolve, reject) => {
-    const nextSound = soundNames.shift();
-    if (nextSound) {
-      const namePart = getSoundName(nextSound);
-      const timePart = getSoundPlaytime(nextSound);
-      const regex = new RegExp(`\\/${namePart}\\.`);
-      const soundKey = sounds.find((sound) => regex.test(sound.Key)).Key;
-      const dispatcher = connection.play(`https://ruediger.s3.eu-central-1.amazonaws.com/${soundKey}`);
+function playSound(connection, soundName, folder) {
+  return new Promise(async resolve => {
+    const namePart = getSoundName(soundName);
+    const timePart = getSoundPlaytime(soundName);
+    try {
+      const sound = await s3.getSound(namePart, folder);
+      const dispatcher = connection.play(bufferToStream(sound));
       if (timePart) {
         dispatcher.on('start', () => {
           setTimeout(() => {
@@ -58,11 +52,23 @@ function playNextSound(connection, soundNames, sounds) {
         });
       }
       dispatcher.on('finish', () => {
-        dispatcher.resume();
-        playNextSound(connection, soundNames, sounds).then(resolve());
+        resolve();
       });
+    } catch {
+      // if the sound can't be found, just don't play it
+      resolve();
     }
   });
+}
+
+function bufferToStream(binary) {
+  const readableInstanceStream = new Readable({
+    read() {
+      this.push(binary);
+      this.push(null);
+    }
+  });
+  return readableInstanceStream;
 }
 
 exports.play = play;

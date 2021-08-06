@@ -8,7 +8,7 @@ class Scene5 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['parkplatz_valentina'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['parkplatz_valentina'], 'sounds_adventure/teil1');
     this._textChannel.send('', {
       files: [{
         attachment: __dirname + '/karte_front.png',
@@ -31,7 +31,7 @@ class Scene5 {
 
   async computeInput(message) {
     if(message.toLowerCase() == 'schrottplatz') {
-      await soundplayer.play(this._voiceChannel, ['parkplatz_karte_geloest'], 'sounds_adventure');
+      await soundplayer.play(this._voiceChannel, ['parkplatz_karte_geloest'], 'sounds_adventure/teil1');
       this._done();
     }
   }

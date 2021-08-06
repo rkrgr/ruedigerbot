@@ -12,14 +12,14 @@ class Scene3 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['garage_zahlenschloss'], 'sounds_adventure');
+    await soundplayer.play(this._voiceChannel, ['garage_zahlenschloss'], 'sounds_adventure/teil1');
     this._textChannel.send('Form der Eingabe:\n1 2 3 4 5');
   }
 
   async computeInput(message) {
       const input = message.split(' ');
       if(this.check(input)) {
-        await soundplayer.play(this._voiceChannel, ['garage_shutdown'], 'sounds_adventure');
+        await soundplayer.play(this._voiceChannel, ['garage_shutdown'], 'sounds_adventure/teil1');
         this._done();
       }
   }

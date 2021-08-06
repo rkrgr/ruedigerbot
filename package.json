@@ -5,7 +5,7 @@
   "main": "bot.js",
   "scripts": {
     "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint ./"
   },
   "author": "Sackopeppler",
@@ -22,5 +22,8 @@
     "nanoid": "^3.1.22",
     "request": "^2.88.2",
     "underscore": "^1.10.2"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
   }
 }
