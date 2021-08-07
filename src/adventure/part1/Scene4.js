@@ -2,73 +2,78 @@ const soundplayer = require("../../soundplayer");
 
 const validNumbers = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 class Scene3 {
   constructor(voiceChannel, textChannel, done) {
-    this._voiceChannel = voiceChannel;
-    this._textChannel = textChannel;
-    this._done = done;
+    this.voiceChannel = voiceChannel;
+    this.textChannel = textChannel;
+    this.done = done;
     this.newGame();
   }
 
   async play() {
     await soundplayer.play(
-      this._voiceChannel,
+      this.voiceChannel,
       ["garage_zahlenschloss"],
       "sounds_adventure/teil1"
     );
-    this._textChannel.send("Form der Eingabe:\n1 2 3 4 5");
+    this.textChannel.send("Form der Eingabe:\n1 2 3 4 5");
   }
 
   async computeInput(message) {
     const input = message.split(" ");
     if (this.check(input)) {
       await soundplayer.play(
-        this._voiceChannel,
+        this.voiceChannel,
         ["garage_shutdown"],
         "sounds_adventure/teil1"
       );
-      this._done();
+      this.done();
     }
   }
 
   check(input) {
-    if (input.length != 5) {
-      this._textChannel.send("Nicht die korrekte Anzahl an Ziffern.");
+    if (input.length !== 5) {
+      this.textChannel.send("Nicht die korrekte Anzahl an Ziffern.");
       return false;
     }
 
     let correctPos = 0;
     let correctDigit = 0;
-    const clone = [...this._board];
+    const clone = [...this.board];
 
-    for (let i = 0; i < input.length; i++) {
+    for (let i = 0; i < input.length; i += 1) {
       if (!validNumbers.includes(input[i])) {
-        this._textChannel.send(`${input[i]} ist keine valide Ziffer.`);
+        this.textChannel.send(`${input[i]} ist keine valide Ziffer.`);
         return false;
       }
 
-      if (input[i] == this._board[i]) {
-        correctPos++;
+      if (input[i] === this.board[i]) {
+        correctPos += 1;
         clone[i] = "x";
       }
     }
 
-    for (let i = 0; i < input.length; i++) {
-      if (clone[i] != "x" && clone.includes(input[i])) {
-        correctDigit++;
+    for (let i = 0; i < input.length; i += 1) {
+      if (clone[i] !== "x" && clone.includes(input[i])) {
+        correctDigit += 1;
         clone[clone.indexOf(input[i])] = 0;
       }
     }
 
-    if (correctPos == 5) {
+    if (correctPos === 5) {
       return true;
     }
 
-    if (--this._remainingLives == 0) {
-      this._textChannel.send("Zu viele Fehlversuche. Code wird zurückgesetzt.");
+    this.remainingLives -= 1;
+    if (this.remainingLives === 0) {
+      this.textChannel.send("Zu viele Fehlversuche. Code wird zurückgesetzt.");
       this.newGame();
     } else {
-      this._textChannel.send(
+      this.textChannel.send(
         `Ziffern an der richtigen Stelle: ${correctPos} - Richtige Ziffern an der falschen Stelle: ${correctDigit}`
       );
     }
@@ -77,16 +82,12 @@ class Scene3 {
   }
 
   newGame() {
-    this._remainingLives = 12;
-    this._board = [];
-    for (let i = 0; i < 5; i++) {
-      this._board.push(`${getRandomInt(8) + 1}`);
+    this.remainingLives = 12;
+    this.board = [];
+    for (let i = 0; i < 5; i += 1) {
+      this.board.push(`${getRandomInt(8) + 1}`);
     }
   }
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
 }
 
 module.exports = Scene3;

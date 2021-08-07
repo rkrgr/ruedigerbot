@@ -2,18 +2,18 @@ const soundplayer = require("../../soundplayer");
 
 class Scene5 {
   constructor(voiceChannel, textChannel, done) {
-    this._voiceChannel = voiceChannel;
-    this._textChannel = textChannel;
-    this._done = done;
+    this.voiceChannel = voiceChannel;
+    this.textChannel = textChannel;
+    this.done = done;
   }
 
   async play() {
     await soundplayer.play(
-      this._voiceChannel,
+      this.voiceChannel,
       ["parkplatz_valentina"],
       "sounds_adventure/teil1"
     );
-    this._textChannel.send("", {
+    this.textChannel.send("", {
       files: [
         {
           attachment: `${__dirname}/karte_front.png`,
@@ -36,13 +36,13 @@ class Scene5 {
   }
 
   async computeInput(message) {
-    if (message.toLowerCase() == "schrottplatz") {
+    if (message.toLowerCase() === "schrottplatz") {
       await soundplayer.play(
-        this._voiceChannel,
+        this.voiceChannel,
         ["parkplatz_karte_geloest"],
         "sounds_adventure/teil1"
       );
-      this._done();
+      this.done();
     }
   }
 }

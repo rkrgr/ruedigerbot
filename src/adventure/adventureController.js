@@ -1,4 +1,6 @@
-const isActive = false;
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
+
 let adventure = null;
 
 function computeInput(message) {

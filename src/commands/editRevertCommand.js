@@ -20,10 +20,8 @@ module.exports = {
     edit.actions.pop();
 
     let startSum = 0;
-    let endSum = 0;
     edit.actions.forEach((a) => {
       startSum += a.start;
-      endSum += a.end;
     });
 
     const sound = await s3.getSound(edit.sound);

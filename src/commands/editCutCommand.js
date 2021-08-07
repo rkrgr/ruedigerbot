@@ -20,15 +20,12 @@ module.exports = {
       message.reply("Incorrect number of arguments.");
       return;
     }
-    if (args.length == 1) {
-      args[1] = 0;
-    }
     const start = args[0];
-    const end = args[1];
+    const end = args.length === 1 ? args[1] : 0;
 
     const edit = await s3.getEdit(message.author.id);
 
-    edit.actions.push({ start: parseInt(start), end: parseInt(end) });
+    edit.actions.push({ start: parseInt(start, 10), end: parseInt(end, 10) });
 
     let startSum = 0;
     let endSum = 0;

@@ -1,29 +1,31 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 class Adventure {
   constructor(voiceChannel, textChannel) {
-    this._voiceChannel = voiceChannel;
-    this._textChannel = textChannel;
+    this.voiceChannel = voiceChannel;
+    this.textChannel = textChannel;
   }
 
   start(numOfScene) {
-    this._sceneNum = numOfScene;
-    this._activeScene = new (require(`./Scene${this._sceneNum}`))(
-      this._voiceChannel,
-      this._textChannel,
+    this.sceneNum = numOfScene;
+    this.activeScene = new (require(`./Scene${this.sceneNum}`))(
+      this.voiceChannel,
+      this.textChannel,
       this.nextScene.bind(this)
     );
-    this._activeScene.play();
+    this.activeScene.play();
   }
 
   nextScene() {
-    this._sceneNum++;
+    this.sceneNum += 1;
     try {
-      if (require.resolve(`./Scene${this._sceneNum}.js`)) {
-        this._activeScene = new (require(`./Scene${this._sceneNum}`))(
-          this._voiceChannel,
-          this._textChannel,
+      if (require.resolve(`./Scene${this.sceneNum}.js`)) {
+        this.activeScene = new (require(`./Scene${this.sceneNum}`))(
+          this.voiceChannel,
+          this.textChannel,
           this.nextScene.bind(this)
         );
-        this._activeScene.play();
+        this.activeScene.play();
       }
     } catch (e) {
       // adventure is done. nothing to do
@@ -31,7 +33,7 @@ class Adventure {
   }
 
   computeInput(message) {
-    this._activeScene.computeInput(message);
+    this.activeScene.computeInput(message);
   }
 }
 

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
+const request = require("request");
 
 const { S3_BUCKET } = process.env;
 const { S3_ACCESS_KEY_ID } = process.env;
@@ -30,9 +31,8 @@ async function addSound(soundName, soundFile) {
   const soundFileTokens = soundFile.split(".");
   const fileType = soundFileTokens[soundFileTokens.length - 1];
 
-  const request = require("request");
   request.get({ url: soundFile, encoding: null }, (error, response, body) => {
-    if (!error && response.statusCode == 200) {
+    if (!error && response.statusCode === 200) {
       const params = {
         Bucket: S3_BUCKET,
         Key: `sounds/${soundName.toLowerCase()}.${fileType}`,
@@ -145,12 +145,8 @@ async function addEdit(userID, soundName) {
 
 async function getEdit(userID) {
   const params = { Bucket: S3_BUCKET, Key: `edits/${userID}` };
-  try {
-    const result = await s3.getObject(params).promise();
-    return JSON.parse(result.Body);
-  } catch (error) {
-    console.log(error);
-  }
+  const result = await s3.getObject(params).promise();
+  return JSON.parse(result.Body);
 }
 
 async function updateEdit(userID, actions) {

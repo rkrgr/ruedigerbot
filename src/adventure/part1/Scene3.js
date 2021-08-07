@@ -2,19 +2,19 @@ const soundplayer = require("../../soundplayer");
 
 class Scene3 {
   constructor(voiceChannel, textChannel, done) {
-    this._voiceChannel = voiceChannel;
-    this._textChannel = textChannel;
-    this._done = done;
+    this.voiceChannel = voiceChannel;
+    this.textChannel = textChannel;
+    this.done = done;
   }
 
   async play() {
     await soundplayer.play(
-      this._voiceChannel,
+      this.voiceChannel,
       ["baeckerei_anfang"],
       "sounds_adventure/teil1"
     );
 
-    this._textChannel.send("", {
+    this.textChannel.send("", {
       files: [
         {
           attachment: `${__dirname}/rohrrätsel.png`,
@@ -22,18 +22,18 @@ class Scene3 {
         },
       ],
     });
-    this._textChannel.send("Form der Eingabe: 1 2 3");
+    this.textChannel.send("Form der Eingabe: 1 2 3");
   }
 
   async computeInput(message) {
     const input = message.split(" ").sort();
-    if (input[0] == "1" && input[1] == "2" && input[2] == "8") {
+    if (input[0] === "1" && input[1] === "2" && input[2] === "8") {
       await soundplayer.play(
-        this._voiceChannel,
+        this.voiceChannel,
         ["baeckerei_ende"],
         "sounds_adventure/teil1"
       );
-      this._done();
+      this.done();
     }
   }
 }
