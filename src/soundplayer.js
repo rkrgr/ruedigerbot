@@ -1,4 +1,5 @@
 const { Readable } = require("stream");
+const { asyncForEach } = require("sequential-async-foreach");
 const s3 = require("./s3database");
 
 function getSoundName(sound) {
@@ -57,9 +58,9 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
 
     const connection = await voiceChannel.join();
 
-    for (soundName of soundNames) {
+    await asyncForEach(soundNames, async (soundName) => {
       await playSound(connection, soundName, folder);
-    }
+    });
   } catch (e) {
     console.log(e);
   }

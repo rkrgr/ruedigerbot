@@ -25,6 +25,7 @@
     "get-audio-duration": "^3.0.0",
     "nanoid": "^3.1.22",
     "request": "^2.88.2",
+    "sequential-async-foreach": "^1.0.4",
     "underscore": "^1.10.2"
   },
   "devDependencies": {
