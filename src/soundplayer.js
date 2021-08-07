@@ -51,19 +51,15 @@ function playSound(connection, soundName, folder) {
 }
 
 async function play(voiceChannel, soundNamesIn, folder = "sounds") {
-  try {
-    const playlistName = soundNamesIn[0];
-    const playlist = await s3.getPlaylist(playlistName);
-    const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;
+  const playlistName = soundNamesIn[0];
+  const playlist = await s3.getPlaylist(playlistName);
+  const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;
 
-    const connection = await voiceChannel.join();
+  const connection = await voiceChannel.join();
 
-    await asyncForEach(soundNames, async (soundName) => {
-      await playSound(connection, soundName, folder);
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  await asyncForEach(soundNames, async (soundName) => {
+    await playSound(connection, soundName, folder);
+  });
 }
 
 async function playFromFile(voiceChannel, file) {
