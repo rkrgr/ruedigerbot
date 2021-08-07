@@ -1,8 +1,10 @@
 const Discord = require("discord.js");
 const fs = require("fs");
+const dotenv = require("dotenv");
+const requireAll = require("require-all");
 
 if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+  dotenv.config();
 }
 
 const s3 = require("./src/s3database");
@@ -12,14 +14,15 @@ const { play } = require("./src/soundplayer");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-const commandFiles = fs
-  .readdirSync("./src/commands")
-  .filter((file) => file.endsWith(".js"));
+const commands = requireAll({
+  dirname: `${__dirname}/src/commands`,
+  filter: /^(.+Command)\.js$/,
+});
 
-for (const file of commandFiles) {
-  const command = require(`./src/commands/${file}`);
+Object.keys(commands).forEach((commandName) => {
+  const command = commands[commandName];
   client.commands.set(command.name, command);
-}
+});
 
 const adventure = require("./src/adventure/adventureController");
 
