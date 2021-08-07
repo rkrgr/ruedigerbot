@@ -2,6 +2,7 @@ const soundplayer = require("../src/soundplayer");
 const s3 = require("../src/s3database");
 
 jest.mock("../src/s3database");
+s3.getSound.mockReturnValue(Promise.resolve());
 
 jest.useFakeTimers();
 

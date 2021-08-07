@@ -1,29 +1,6 @@
 const { Readable } = require("stream");
 const s3 = require("./s3database");
 
-async function play(voiceChannel, soundNames, folder = "sounds") {
-  try {
-    const playlistName = soundNames[0];
-    const playlist = await s3.getPlaylist(playlistName);
-    if (playlist) {
-      soundNames = JSON.parse(playlist);
-    }
-
-    const connection = await voiceChannel.join();
-
-    for (const soundName of soundNames) {
-      await playSound(connection, soundName, folder);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-async function playFromFile(voiceChannel, file) {
-  const connection = await voiceChannel.join();
-  return connection.play(file);
-}
-
 function getSoundName(sound) {
   const soundSplit = sound.split("(");
   return soundSplit[0];
@@ -37,30 +14,6 @@ function getSoundPlaytime(sound) {
   return null;
 }
 
-function playSound(connection, soundName, folder) {
-  return new Promise(async (resolve) => {
-    const namePart = getSoundName(soundName);
-    const timePart = getSoundPlaytime(soundName);
-    try {
-      const sound = await s3.getSound(namePart, folder);
-      const dispatcher = connection.play(bufferToStream(sound));
-      if (timePart) {
-        dispatcher.on("start", () => {
-          setTimeout(() => {
-            dispatcher.end();
-          }, timePart * 1000);
-        });
-      }
-      dispatcher.on("finish", () => {
-        resolve();
-      });
-    } catch {
-      // if the sound can't be found, just don't play it
-      resolve();
-    }
-  });
-}
-
 function bufferToStream(binary) {
   const readableInstanceStream = new Readable({
     read() {
@@ -69,6 +22,52 @@ function bufferToStream(binary) {
     },
   });
   return readableInstanceStream;
+}
+
+function playSound(connection, soundName, folder) {
+  const namePart = getSoundName(soundName);
+  const timePart = getSoundPlaytime(soundName);
+  return new Promise((resolve) => {
+    s3.getSound(namePart, folder)
+      .then((sound) => {
+        const dispatcher = connection.play(bufferToStream(sound));
+        if (timePart) {
+          dispatcher.on("start", () => {
+            setTimeout(() => {
+              dispatcher.end();
+            }, timePart * 1000);
+          });
+        }
+        dispatcher.on("finish", () => {
+          resolve();
+        });
+      })
+      .catch(() => {
+        // if the sound can't be found, just don't play it
+        resolve();
+      });
+  });
+}
+
+async function play(voiceChannel, soundNamesIn, folder = "sounds") {
+  try {
+    const playlistName = soundNamesIn[0];
+    const playlist = await s3.getPlaylist(playlistName);
+    const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;
+
+    const connection = await voiceChannel.join();
+
+    for (soundName of soundNames) {
+      await playSound(connection, soundName, folder);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function playFromFile(voiceChannel, file) {
+  const connection = await voiceChannel.join();
+  return connection.play(file);
 }
 
 exports.play = play;
