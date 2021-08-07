@@ -1,4 +1,4 @@
-const soundplayer = require('../../soundplayer');
+const soundplayer = require("../../soundplayer");
 
 class Scene5 {
   constructor(voiceChannel, textChannel, done) {
@@ -8,30 +8,40 @@ class Scene5 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['parkplatz_valentina'], 'sounds_adventure/teil1');
-    this._textChannel.send('', {
-      files: [{
-        attachment: __dirname + '/karte_front.png',
-        name: 'karte_front.png',
-      },
-      {
-        attachment: __dirname + '/karte_kreuze.png',
-        name: 'karte_kreuze.png',
-      },
-      {
-        attachment: __dirname + '/karte_buchstaben.png',
-        name: 'karte_buchstaben.png',
-      },
-      {
-        attachment: __dirname + '/karte_schwarz.png',
-        name: 'karte_schwarz.png',
-      }],
+    await soundplayer.play(
+      this._voiceChannel,
+      ["parkplatz_valentina"],
+      "sounds_adventure/teil1"
+    );
+    this._textChannel.send("", {
+      files: [
+        {
+          attachment: `${__dirname}/karte_front.png`,
+          name: "karte_front.png",
+        },
+        {
+          attachment: `${__dirname}/karte_kreuze.png`,
+          name: "karte_kreuze.png",
+        },
+        {
+          attachment: `${__dirname}/karte_buchstaben.png`,
+          name: "karte_buchstaben.png",
+        },
+        {
+          attachment: `${__dirname}/karte_schwarz.png`,
+          name: "karte_schwarz.png",
+        },
+      ],
     });
   }
 
   async computeInput(message) {
-    if(message.toLowerCase() == 'schrottplatz') {
-      await soundplayer.play(this._voiceChannel, ['parkplatz_karte_geloest'], 'sounds_adventure/teil1');
+    if (message.toLowerCase() == "schrottplatz") {
+      await soundplayer.play(
+        this._voiceChannel,
+        ["parkplatz_karte_geloest"],
+        "sounds_adventure/teil1"
+      );
       this._done();
     }
   }

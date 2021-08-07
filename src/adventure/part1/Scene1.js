@@ -1,4 +1,4 @@
-const soundplayer = require('../../soundplayer');
+const soundplayer = require("../../soundplayer");
 
 class Scene1 {
   constructor(voiceChannel, textChannel, done) {
@@ -8,7 +8,11 @@ class Scene1 {
   }
 
   async play() {
-    await soundplayer.play(this._voiceChannel, ['parkplatzStart'], 'sounds_adventure/teil1');
+    await soundplayer.play(
+      this._voiceChannel,
+      ["parkplatzStart"],
+      "sounds_adventure/teil1"
+    );
     this._done();
   }
 }

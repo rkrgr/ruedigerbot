@@ -1,4 +1,4 @@
-let isActive = false;
+const isActive = false;
 let adventure = null;
 
 function computeInput(message) {
@@ -10,8 +10,11 @@ function adventureIsActive() {
 }
 
 function start(voiceChannel, textChannel, adventureName, numOfScene = 1) {
-    adventure = new (require(`./${adventureName}/Adventure`))(voiceChannel, textChannel);
-    adventure.start(numOfScene)
+  adventure = new (require(`./${adventureName}/Adventure`))(
+    voiceChannel,
+    textChannel
+  );
+  adventure.start(numOfScene);
 }
 
 module.exports.computeInput = computeInput;

@@ -1,13 +1,13 @@
-const s3 = require('../s3database');
+const s3 = require("../s3database");
 
 module.exports = {
-	name: 'edit',
-	description: 'Edit a sound.',
-	async execute(message, args) {
-		const soundName = args[0];
+  name: "edit",
+  description: "Edit a sound.",
+  async execute(message, args) {
+    const soundName = args[0];
 
-		message.reply('Editing of "' + soundName + '" started.');
+    message.reply(`Editing of "${soundName}" started.`);
 
-		s3.addEdit(message.author.id, soundName);
-	},
+    s3.addEdit(message.author.id, soundName);
+  },
 };

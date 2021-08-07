@@ -6,7 +6,11 @@ class Adventure {
 
   start(numOfScene) {
     this._sceneNum = numOfScene;
-    this._activeScene = new (require(`./Scene${this._sceneNum}`))(this._voiceChannel, this._textChannel, this.nextScene.bind(this));
+    this._activeScene = new (require(`./Scene${this._sceneNum}`))(
+      this._voiceChannel,
+      this._textChannel,
+      this.nextScene.bind(this)
+    );
     this._activeScene.play();
   }
 
@@ -14,7 +18,11 @@ class Adventure {
     this._sceneNum++;
     try {
       if (require.resolve(`./Scene${this._sceneNum}.js`)) {
-        this._activeScene = new (require(`./Scene${this._sceneNum}`))(this._voiceChannel, this._textChannel, this.nextScene.bind(this));
+        this._activeScene = new (require(`./Scene${this._sceneNum}`))(
+          this._voiceChannel,
+          this._textChannel,
+          this.nextScene.bind(this)
+        );
         this._activeScene.play();
       }
     } catch (e) {
