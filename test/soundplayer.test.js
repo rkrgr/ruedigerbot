@@ -23,47 +23,51 @@ const dispatcher = {
 voiceChannel.join.mockReturnValue(connection);
 connection.play.mockReturnValue(dispatcher);
 
-beforeEach(() => {
-  jest.clearAllMocks();
-});
+describe("play sounds", () => {
+  it("join when playing sound", async () => {
+    expect.hasAssertions();
+    await soundplayer.play(voiceChannel, ["alarm"]);
+    expect(voiceChannel.join.mock.calls).toHaveLength(1);
+  });
 
-test("join when playing sound", async () => {
-  await soundplayer.play(voiceChannel, ["alarm"]);
-  expect(voiceChannel.join.mock.calls).toHaveLength(1);
-});
+  it("play sound", async () => {
+    expect.hasAssertions();
+    await soundplayer.play(voiceChannel, ["alarm"]);
+    expect(connection.play.mock.calls).toHaveLength(1);
+    expect(connection.play.mock.calls[0][0]).toBeDefined();
+  });
 
-test("play sound", async () => {
-  await soundplayer.play(voiceChannel, ["alarm"]);
-  expect(connection.play.mock.calls).toHaveLength(1);
-  expect(connection.play.mock.calls[0][0]).toBeDefined();
-});
+  it("play two sounds", async () => {
+    expect.hasAssertions();
+    await soundplayer.play(voiceChannel, ["hallo", "alarm"]);
+    expect(connection.play.mock.calls).toHaveLength(2);
+    expect(connection.play.mock.calls[0][0]).toBeDefined();
+    expect(connection.play.mock.calls[1][0]).toBeDefined();
+  });
 
-test("play two sounds", async () => {
-  await soundplayer.play(voiceChannel, ["hallo", "alarm"]);
-  expect(connection.play.mock.calls).toHaveLength(2);
-  expect(connection.play.mock.calls[0][0]).toBeDefined();
-  expect(connection.play.mock.calls[1][0]).toBeDefined();
-});
+  it("play playlist", async () => {
+    expect.hasAssertions();
+    s3.getPlaylist.mockResolvedValueOnce(JSON.stringify(["hallo", "alarm"]));
+    await soundplayer.play(voiceChannel, ["whatever"]);
+    expect(connection.play.mock.calls).toHaveLength(2);
+    expect(connection.play.mock.calls[0][0]).toBeDefined();
+    expect(connection.play.mock.calls[1][0]).toBeDefined();
+  });
 
-test("play playlist", async () => {
-  s3.getPlaylist.mockResolvedValueOnce(JSON.stringify(["hallo", "alarm"]));
-  await soundplayer.play(voiceChannel, ["whatever"]);
-  expect(connection.play.mock.calls).toHaveLength(2);
-  expect(connection.play.mock.calls[0][0]).toBeDefined();
-  expect(connection.play.mock.calls[1][0]).toBeDefined();
-});
+  it("play sound with limited time", async () => {
+    expect.hasAssertions();
 
-test("play sound with limited time", async () => {
-  await soundplayer.play(voiceChannel, ["alarm(2)"]);
+    await soundplayer.play(voiceChannel, ["alarm(2)"]);
 
-  expect(dispatcher.end.mock.calls).toHaveLength(0);
+    expect(dispatcher.end.mock.calls).toHaveLength(0);
 
-  jest.advanceTimersByTime(1000);
-  expect(dispatcher.end.mock.calls).toHaveLength(0);
+    jest.advanceTimersByTime(1000);
+    expect(dispatcher.end.mock.calls).toHaveLength(0);
 
-  jest.advanceTimersByTime(1000);
-  expect(dispatcher.end.mock.calls).toHaveLength(1);
+    jest.advanceTimersByTime(1000);
+    expect(dispatcher.end.mock.calls).toHaveLength(1);
 
-  expect(connection.play.mock.calls).toHaveLength(1);
-  expect(connection.play.mock.calls[0][0]).toBeDefined();
+    expect(connection.play.mock.calls).toHaveLength(1);
+    expect(connection.play.mock.calls[0][0]).toBeDefined();
+  });
 });

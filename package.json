@@ -11,6 +11,9 @@
   },
   "author": "Sackopeppler",
   "license": "ISC",
+  "jest": {
+    "clearMocks": true
+  },
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
