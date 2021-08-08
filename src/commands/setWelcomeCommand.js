@@ -1,3 +1,4 @@
+const logger = require("../logger");
 const s3 = require("../s3database");
 
 module.exports = {
@@ -21,7 +22,7 @@ module.exports = {
         `Welcomesound "${soundName}" was set for User "${message.author.username}".`
       );
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       message.channel.send("Welcomesound could not be set.");
     }
   },

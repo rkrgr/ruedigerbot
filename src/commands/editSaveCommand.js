@@ -9,6 +9,7 @@ const { nanoid } = require("nanoid");
 
 const path = require("path");
 
+const logger = require("../logger");
 const s3 = require("../s3database");
 
 module.exports = {
@@ -38,9 +39,6 @@ module.exports = {
     fs.writeFileSync(tempFileNameInput, sound);
 
     let duration = (await getAudioDurationInSeconds(tempFileNameInput)) * 1000;
-
-    console.log(duration);
-
     duration -= startSum + endSum;
 
     ffmpeg()
@@ -61,7 +59,7 @@ module.exports = {
         message.reply("Saved changes. Editing ended.");
       })
       .on("error", (err) => {
-        console.log("error: ", err);
+        logger.error(err);
       })
       .run();
   },

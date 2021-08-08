@@ -1,6 +1,7 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const request = require("request");
+const logger = require("./logger");
 
 const { S3_BUCKET } = process.env;
 const { S3_ACCESS_KEY_ID } = process.env;
@@ -43,10 +44,10 @@ async function addSound(soundName, soundFile) {
 
       s3.upload(params, (err, data) => {
         if (err) {
-          console.log("Error", err);
+          logger.error(err);
         }
         if (data) {
-          console.log("Upload Success", data.Location);
+          logger.info("Upload Success", data.Location);
         }
       });
     }
@@ -111,10 +112,10 @@ function addPlaylist(name, sounds) {
 
   s3.upload(params, (err, data) => {
     if (err) {
-      console.log("Error", err);
+      logger.error(err);
     }
     if (data) {
-      console.log("Upload Success", data.Location);
+      logger.info("Upload Success", data.Location);
     }
   });
 }
@@ -135,10 +136,10 @@ async function addEdit(userID, soundName) {
 
   s3.upload(params, (err, data) => {
     if (err) {
-      console.log("Error", err);
+      logger.error(err);
     }
     if (data) {
-      console.log("Upload Success", data.Location);
+      logger.info("Upload Success", data.Location);
     }
   });
 }
@@ -156,10 +157,10 @@ async function updateEdit(userID, actions) {
 
   s3.upload(params, (err, data) => {
     if (err) {
-      console.log("Error", err);
+      logger.error(err);
     }
     if (data) {
-      console.log("Upload Success", data.Location);
+      logger.info("Upload Success", data.Location);
     }
   });
 }

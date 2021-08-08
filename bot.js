@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const dotenv = require("dotenv");
 const requireAll = require("require-all");
+const logger = require("./src/logger");
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
@@ -26,7 +27,7 @@ Object.keys(commands).forEach((commandName) => {
 const adventure = require("./src/adventure/adventureController");
 
 client.once("ready", () => {
-  console.log("Ready!");
+  logger.info("Ready!");
 });
 
 client.on("message", (message) => {
@@ -53,7 +54,7 @@ client.on("message", (message) => {
       client.commands.get("play").execute(message, args);
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.reply("there was an error trying to execute that command!");
   }
 });

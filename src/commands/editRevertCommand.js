@@ -8,6 +8,7 @@ const { nanoid } = require("nanoid");
 
 const path = require("path");
 
+const logger = require("../logger");
 const s3 = require("../s3database");
 const { playFromFile } = require("../soundplayer");
 
@@ -64,7 +65,7 @@ module.exports = {
         });
       })
       .on("error", (err) => {
-        console.log("error: ", err);
+        logger.error(err);
       })
       .run();
 
