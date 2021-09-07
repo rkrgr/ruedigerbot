@@ -37,7 +37,6 @@ async function addSound(soundName, soundFile) {
       const params = {
         Bucket: S3_BUCKET,
         Key: `sounds/${soundName.toLowerCase()}.${fileType}`,
-        ACL: "public-read",
         ContentType: "audio/mp3",
       };
       params.Body = body;
