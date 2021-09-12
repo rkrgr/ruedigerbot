@@ -3,6 +3,7 @@ const {
   joinVoiceChannel,
   createAudioResource,
   createAudioPlayer,
+  StreamType,
   AudioPlayerStatus,
 } = require("@discordjs/voice");
 const s3 = require("./s3database");
@@ -27,7 +28,9 @@ function playSound(player, soundName, folder) {
   return new Promise((resolve) => {
     s3.getSoundStream(namePart, folder)
       .then((stream) => {
-        const resource = createAudioResource(stream);
+        const resource = createAudioResource(stream, {
+          inputType: StreamType.OggOpus,
+        });
         player.play(resource);
         player.on("error", (error) => {
           logger.error(error);
