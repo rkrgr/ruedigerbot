@@ -1,4 +1,3 @@
-const { Readable } = require("stream");
 const { asyncForEach } = require("sequential-async-foreach");
 const {
   joinVoiceChannel,
@@ -22,25 +21,13 @@ function getSoundPlaytime(sound) {
   return null;
 }
 
-function bufferToStream(binary) {
-  const readableInstanceStream = new Readable({
-    read() {
-      this.push(binary);
-      this.push(null);
-    },
-  });
-  return readableInstanceStream;
-}
-
 function playSound(player, soundName, folder) {
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
   return new Promise((resolve) => {
-    s3.getSound(namePart, folder)
-      .then((sound) => {
-        const stream = bufferToStream(sound);
+    s3.getSoundStream(namePart, folder)
+      .then((stream) => {
         const resource = createAudioResource(stream);
-        // console.log(stream);
         player.play(resource);
         player.on("error", (error) => {
           logger.error(error);
