@@ -11,6 +11,9 @@
   },
   "author": "Sackopeppler",
   "license": "ISC",
+  "engines": {
+    "node": "16.x"
+  },
   "jest": {
     "clearMocks": true
   },
