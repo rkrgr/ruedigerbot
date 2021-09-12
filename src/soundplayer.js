@@ -1,6 +1,13 @@
 const { Readable } = require("stream");
 const { asyncForEach } = require("sequential-async-foreach");
+const {
+  joinVoiceChannel,
+  createAudioResource,
+  createAudioPlayer,
+  AudioPlayerStatus,
+} = require("@discordjs/voice");
 const s3 = require("./s3database");
+const logger = require("./logger");
 
 function getSoundName(sound) {
   const soundSplit = sound.split("(");
@@ -25,21 +32,27 @@ function bufferToStream(binary) {
   return readableInstanceStream;
 }
 
-function playSound(connection, soundName, folder) {
+function playSound(player, soundName, folder) {
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
   return new Promise((resolve) => {
     s3.getSound(namePart, folder)
       .then((sound) => {
-        const dispatcher = connection.play(bufferToStream(sound));
+        const stream = bufferToStream(sound);
+        const resource = createAudioResource(stream);
+        // console.log(stream);
+        player.play(resource);
+        player.on("error", (error) => {
+          logger.error(error);
+        });
         if (timePart) {
-          dispatcher.on("start", () => {
+          player.on(AudioPlayerStatus.Playing, () => {
             setTimeout(() => {
-              dispatcher.end();
+              player.stop();
             }, timePart * 1000);
           });
         }
-        dispatcher.on("finish", () => {
+        player.on(AudioPlayerStatus.Idle, () => {
           resolve();
         });
       })
@@ -55,10 +68,17 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   const playlist = await s3.getPlaylist(playlistName);
   const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;
 
-  const connection = await voiceChannel.join();
+  const connection = joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guild.id,
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+  });
+
+  const player = createAudioPlayer();
+  connection.subscribe(player);
 
   await asyncForEach(soundNames, async (soundName) => {
-    await playSound(connection, soundName, folder);
+    await playSound(player, soundName, folder);
   });
 }
 

@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { Collection, Client, Intents } = require("discord.js");
 const dotenv = require("dotenv");
 const requireAll = require("require-all");
 const logger = require("./src/logger");
@@ -11,8 +11,14 @@ const s3 = require("./src/s3database");
 
 const { play } = require("./src/soundplayer");
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+    Intents.FLAGS.GUILD_MESSAGES,
+  ],
+});
+client.commands = new Collection();
 
 const commands = requireAll({
   dirname: `${__dirname}/src/commands`,
@@ -30,7 +36,7 @@ client.once("ready", () => {
   logger.info("Ready!");
 });
 
-client.on("message", (message) => {
+client.on("messageCreate", (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(process.env.PREFIX)) {
     if (adventure.adventureIsActive()) {
@@ -60,8 +66,8 @@ client.on("message", (message) => {
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {
-  const oldVoice = oldState.channelID;
-  const newVoice = newState.channelID;
+  const oldVoice = oldState.channelId;
+  const newVoice = newState.channelId;
 
   if (oldVoice == null && newVoice != null) {
     s3.getWelcomeSound(newState.member.user.id).then((soundName) => {

@@ -22,10 +22,24 @@ async function getSound(soundName, folder) {
   }
 }
 
+async function getSoundStream(soundName, folder) {
+  const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}.mp3` };
+  try {
+    return s3.getObject(params).createReadStream();
+  } catch (error) {
+    throw new Error(`Can't get sound ${soundName}.`);
+  }
+}
+
 async function getSounds(folder) {
   const params = { Bucket: S3_BUCKET, Prefix: `${folder}/` };
-  const data = await s3.listObjectsV2(params).promise();
-  return data.Contents;
+  try {
+    const data = await s3.listObjectsV2(params).promise();
+    return data.Contents;
+  } catch (e) {
+    logger.error(e);
+    return [];
+  }
 }
 
 async function addSound(soundName, soundFile) {
@@ -170,6 +184,7 @@ async function deleteEdit(userID) {
 }
 
 exports.getSound = getSound;
+exports.getSoundStream = getSoundStream;
 exports.getSounds = getSounds;
 exports.addSound = addSound;
 exports.addSoundFromFile = addSoundFromFile;
