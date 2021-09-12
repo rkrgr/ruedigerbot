@@ -1,6 +1,8 @@
 const fs = require("fs");
+const path = require("path");
 const AWS = require("aws-sdk");
 const ffmpeg = require("fluent-ffmpeg");
+const normalize = require("ffmpeg-normalize");
 const logger = require("./logger");
 
 const { S3_BUCKET } = process.env;
@@ -43,32 +45,45 @@ async function getSounds(folder) {
 }
 
 async function addSound(soundName, soundFile) {
-  ffmpeg(soundFile)
+  const fileName = path.join(__dirname, "tempSound");
+
+  await normalize({
+    input: soundFile,
+    output: `${fileName}.mp3`,
+    loudness: {
+      normalization: "ebuR128",
+      target: {
+        input_i: -23,
+        input_lra: 7.0,
+        input_tp: -2.0,
+      },
+    },
+  });
+
+  ffmpeg(`${fileName}.mp3`)
     .audioCodec("libopus")
     .format("ogg")
-    .on("error", (err) => {
-      logger.error(err);
-    })
-    .save("tmpUploadSound.ogg");
+    .save(`${fileName}.ogg`)
+    .on("end", () => {
+      const params = {
+        Bucket: S3_BUCKET,
+        Key: `sounds/${soundName.toLowerCase()}.ogg`,
+        ContentType: "audio/opus",
+      };
 
-  const params = {
-    Bucket: S3_BUCKET,
-    Key: `sounds/${soundName.toLowerCase()}.ogg`,
-    ContentType: "audio/opus",
-  };
+      // ffmpeg -i input.mp3 -c:a libopus -b:a 32k -vbr on -compression_level 10 -frame_duration 60 -application voip output.opus
 
-  // ffmpeg -i input.mp3 -c:a libopus -b:a 32k -vbr on -compression_level 10 -frame_duration 60 -application voip output.opus
+      params.Body = fs.readFileSync(`${fileName}.ogg`);
 
-  params.Body = fs.readFileSync("tmpUploadSound.ogg");
-
-  s3.upload(params, (err, data) => {
-    if (err) {
-      logger.error(err);
-    }
-    if (data) {
-      logger.info("Upload Success", data.Location);
-    }
-  });
+      s3.upload(params, (err, data) => {
+        if (err) {
+          logger.error(err);
+        }
+        if (data) {
+          logger.info("Upload Success", data.Location);
+        }
+      });
+    });
 }
 
 async function addSoundFromFile(soundName, soundFile) {

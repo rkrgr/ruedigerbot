@@ -9,6 +9,8 @@ const {
 const s3 = require("./s3database");
 const logger = require("./logger");
 
+let player;
+
 function getSoundName(sound) {
   const soundSplit = sound.split("(");
   return soundSplit[0];
@@ -64,7 +66,9 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
     adapterCreator: voiceChannel.guild.voiceAdapterCreator,
   });
 
-  const player = createAudioPlayer();
+  if (!player) {
+    player = createAudioPlayer();
+  }
   connection.subscribe(player);
 
   await asyncForEach(soundNames, async (soundName) => {
