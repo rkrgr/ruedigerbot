@@ -10,6 +10,8 @@ const s3 = require("./s3database");
 const logger = require("./logger");
 
 const TIMEOUT = 60_000;
+let currentTimeout;
+let isPlayingQueue = false;
 
 let player;
 const soundQueue = [];
@@ -28,6 +30,7 @@ function getSoundPlaytime(sound) {
 }
 
 async function playSound(soundName, folder) {
+  clearTimeout(currentTimeout);
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
   const stream = await s3.getSoundStream(namePart, folder);
@@ -36,9 +39,9 @@ async function playSound(soundName, folder) {
       inputType: StreamType.OggOpus,
     });
     player.play(resource);
+    await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
-      await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
-      setTimeout(() => {
+      currentTimeout = setTimeout(() => {
         player.stop();
       }, timePart * 1000);
     }
@@ -47,10 +50,13 @@ async function playSound(soundName, folder) {
 }
 
 async function playSoundQueue() {
+  isPlayingQueue = true;
   if (soundQueue.length) {
     const { soundName, folder } = soundQueue.shift();
     await playSound(soundName, folder);
     playSoundQueue();
+  } else {
+    isPlayingQueue = false;
   }
 }
 
@@ -70,8 +76,6 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
     player.on("error", (error) => {
       logger.error(error);
     });
-  } else {
-    player.stop();
   }
   connection.subscribe(player);
 
@@ -83,7 +87,11 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
     soundQueue.push({ soundName, folder });
   }
 
-  playSoundQueue();
+  if (isPlayingQueue) {
+    player.stop();
+  } else {
+    playSoundQueue();
+  }
 }
 
 async function playFromFile(voiceChannel, file) {
