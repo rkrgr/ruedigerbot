@@ -9,7 +9,7 @@ const {
 const s3 = require("./s3database");
 const logger = require("./logger");
 
-const TIMEOUT = 60_000;
+const TIMEOUT = 300_000;
 let currentTimeout;
 let isPlayingQueue = false;
 
