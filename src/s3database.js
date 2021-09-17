@@ -25,12 +25,13 @@ async function getSound(soundName, folder) {
 }
 
 async function getSoundStream(soundName, folder) {
-  const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}.ogg` };
+  const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}` };
   try {
     return s3.getObject(params).createReadStream();
   } catch (error) {
-    throw new Error(`Can't get sound ${soundName}.`);
+    logger.error(`Can't get sound ${soundName}.`);
   }
+  return undefined;
 }
 
 async function getSounds(folder) {
@@ -67,7 +68,7 @@ async function addSound(soundName, soundFile) {
     .on("end", () => {
       const params = {
         Bucket: S3_BUCKET,
-        Key: `sounds/${soundName.toLowerCase()}.ogg`,
+        Key: `sounds/${soundName.toLowerCase()}`,
         ContentType: "audio/opus",
       };
 

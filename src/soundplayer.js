@@ -3,7 +3,7 @@ const {
   createAudioResource,
   createAudioPlayer,
   entersState,
-  StreamType,
+  demuxProbe,
   AudioPlayerStatus,
 } = require("@discordjs/voice");
 const s3 = require("./s3database");
@@ -33,11 +33,10 @@ async function playSound(soundName, folder) {
   clearTimeout(currentTimeout);
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
-  const stream = await s3.getSoundStream(namePart, folder);
-  if (stream) {
-    const resource = createAudioResource(stream, {
-      inputType: StreamType.OggOpus,
-    });
+  const readStream = await s3.getSoundStream(namePart, folder);
+  if (readStream) {
+    const { stream, type } = await demuxProbe(readStream);
+    const resource = createAudioResource(stream, { inputType: type });
     player.play(resource);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
