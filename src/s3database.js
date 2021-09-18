@@ -27,6 +27,7 @@ async function getSound(soundName, folder) {
 async function getSoundStream(soundName, folder) {
   const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}` };
   try {
+    await s3.headObject(params).promise();
     return s3.getObject(params).createReadStream();
   } catch (error) {
     logger.error(`Can't get sound ${soundName}.`);
