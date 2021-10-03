@@ -1,6 +1,5 @@
 const soundplayer = require("../../soundplayer");
 
-const beepFile = `${__dirname}/beep.mp3`;
 const width = 8;
 const height = 13;
 const obstacle1Pos = [9, 2];
@@ -38,14 +37,14 @@ class Scene7 {
   }
 
   async play() {
-    await soundplayer.play(
+    /* await soundplayer.play(
       this.voiceChannel,
       ["schrottplatz_anfang"],
       "sounds_adventure/teil1"
-    );
-    this.connection = await this.voiceChannel.join();
+    ); */
+    // this.connection = await this.voiceChannel.join();
     this.beepActive = true;
-    this.playBeepLoop(1000);
+    this.playBeepLoop();
   }
 
   async computeInput(message) {
@@ -105,7 +104,7 @@ class Scene7 {
           "sounds_adventure/teil1"
         );
         this.beepActive = true;
-        this.playBeepLoop(1000);
+        this.playBeepLoop();
       } else if (isPosEqual(this.currentTarget, obstacle2Pos)) {
         this.beepActive = false;
         this.currentTarget = ruedigerPos;
@@ -115,7 +114,7 @@ class Scene7 {
           "sounds_adventure/teil1"
         );
         this.beepActive = true;
-        this.playBeepLoop(1000);
+        this.playBeepLoop();
       } else if (isPosEqual(this.currentTarget, ruedigerPos)) {
         this.beepActive = false;
         await soundplayer.play(
@@ -134,17 +133,17 @@ class Scene7 {
     );
   }
 
-  async playBeepLoop(speed) {
+  playBeepLoop() {
     setTimeout(async () => {
       if (this.beepActive) {
-        const dispatcher = this.connection.play(beepFile);
-        dispatcher.on("finish", () => {
-          if (this.beepActive) {
-            this.playBeepLoop(this.distanceTo(this.currentTarget) * 1000);
-          }
-        });
+        await soundplayer.play(
+          this.voiceChannel,
+          ["beep"],
+          "sounds_adventure/teil1"
+        );
+        this.playBeepLoop();
       }
-    }, speed);
+    }, this.distanceTo(this.currentTarget) * 1000);
   }
 }
 

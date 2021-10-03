@@ -14,9 +14,9 @@ class Scene8 {
       "sounds_adventure/teil1"
     );
     this.textChannel.send("Form der Eingabe: 1 2 3 4 5");
-    soundplayer.playFromFile(this.voiceChannel, `${__dirname}/morse.mp3`);
+    soundplayer.play(this.voiceChannel, ["morse"], "sounds_adventure/teil1");
     this.intervalId = setInterval(() => {
-      soundplayer.playFromFile(this.voiceChannel, `${__dirname}/morse.mp3`);
+      soundplayer.play(this.voiceChannel, ["morse"], "sounds_adventure/teil1");
     }, 20000);
   }
 

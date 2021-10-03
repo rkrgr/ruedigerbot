@@ -14,7 +14,8 @@ class Scene3 {
       "sounds_adventure/teil1"
     );
 
-    this.textChannel.send("", {
+    this.textChannel.send({
+      content: "Form der Eingabe: 1 2 3",
       files: [
         {
           attachment: `${__dirname}/rohrrätsel.png`,
@@ -22,7 +23,6 @@ class Scene3 {
         },
       ],
     });
-    this.textChannel.send("Form der Eingabe: 1 2 3");
   }
 
   async computeInput(message) {

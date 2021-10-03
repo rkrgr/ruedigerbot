@@ -53,7 +53,7 @@ async function playSoundQueue() {
   if (soundQueue.length) {
     const { soundName, folder } = soundQueue.shift();
     await playSound(soundName, folder);
-    playSoundQueue();
+    await playSoundQueue();
   } else {
     isPlayingQueue = false;
   }
@@ -89,7 +89,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   if (isPlayingQueue) {
     player.stop();
   } else {
-    playSoundQueue();
+    await playSoundQueue();
   }
 }
 

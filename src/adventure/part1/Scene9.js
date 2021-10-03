@@ -13,7 +13,7 @@ class Scene9 {
       ["parkplatz_schwarze_karte"],
       "sounds_adventure/teil1"
     );
-    this.textChannel.send("", {
+    this.textChannel.send({
       files: [
         {
           attachment: `${__dirname}/karte_front.png`,

@@ -6,7 +6,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-class Scene3 {
+class Scene4 {
   constructor(voiceChannel, textChannel, done) {
     this.voiceChannel = voiceChannel;
     this.textChannel = textChannel;
@@ -90,4 +90,4 @@ class Scene3 {
   }
 }
 
-module.exports = Scene3;
+module.exports = Scene4;

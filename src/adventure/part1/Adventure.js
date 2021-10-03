@@ -7,7 +7,7 @@ class Adventure {
   }
 
   start(numOfScene) {
-    this.sceneNum = numOfScene;
+    this.sceneNum = parseInt(numOfScene, 10);
     this.activeScene = new (require(`./Scene${this.sceneNum}`))(
       this.voiceChannel,
       this.textChannel,
