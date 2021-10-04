@@ -2,6 +2,7 @@ const { Collection, Client, Intents } = require("discord.js");
 const dotenv = require("dotenv");
 const requireAll = require("require-all");
 const logger = require("./src/logger");
+const wednesdaySchedule = require("./src/wednesdaySchedule");
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
@@ -33,6 +34,7 @@ Object.keys(commands).forEach((commandName) => {
 const adventure = require("./src/adventure/adventureController");
 
 client.once("ready", () => {
+  wednesdaySchedule(client.user);
   logger.info("Ready!");
 });
 
@@ -70,11 +72,16 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   const newVoice = newState.channelId;
 
   if (oldVoice == null && newVoice != null) {
-    s3.getWelcomeSound(newState.member.user.id).then((soundName) => {
-      if (soundName) {
-        play(newState.member.voice.channel, [soundName]);
-      }
-    });
+    if (new Date().getDay() === 3) {
+      // on wednesday
+      play(newState.member.voice.channel, ["wednesday"]);
+    } else {
+      s3.getWelcomeSound(newState.member.user.id).then((soundName) => {
+        if (soundName) {
+          play(newState.member.voice.channel, [soundName]);
+        }
+      });
+    }
   }
 });
 

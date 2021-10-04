@@ -30,6 +30,7 @@
     "get-audio-duration": "^3.0.0",
     "libsodium-wrappers": "^0.7.9",
     "nanoid": "^3.1.22",
+    "node-schedule": "^2.0.0",
     "request": "^2.88.2",
     "require-all": "^3.0.0",
     "sequential-async-foreach": "^1.0.4",
