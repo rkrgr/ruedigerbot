@@ -1,10 +1,10 @@
 const schedule = require("node-schedule");
 
 module.exports = (user) => {
-  schedule.scheduleJob("8 * * * 3", () => {
+  schedule.scheduleJob("* * * * 3", () => {
     user.setAvatar("./media/wednesday_frog.png");
   });
-  schedule.scheduleJob("9 * * * 4", () => {
+  schedule.scheduleJob("* * * * 4", () => {
     user.setAvatar("./media/ruediger.png");
   });
 };
