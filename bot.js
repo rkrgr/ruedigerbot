@@ -68,6 +68,7 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {
+  if (newState.member.user.bot) return;
   const oldVoice = oldState.channelId;
   const newVoice = newState.channelId;
 
