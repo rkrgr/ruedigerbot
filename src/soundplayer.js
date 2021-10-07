@@ -5,7 +5,6 @@ const {
   entersState,
   demuxProbe,
   AudioPlayerStatus,
-  StreamType,
 } = require("@discordjs/voice");
 const ytdl = require("ytdl-core");
 const s3 = require("./s3database");
@@ -33,33 +32,27 @@ function getSoundPlaytime(sound) {
 
 async function playSound(soundName, folder) {
   clearTimeout(currentTimeout);
-
+  const namePart = getSoundName(soundName);
+  const timePart = getSoundPlaytime(soundName);
+  let readStream;
   if (soundName.startsWith("http")) {
-    const stream = ytdl(soundName, {
+    readStream = ytdl(soundName, {
       filter: "audioonly",
     });
-    const resource = createAudioResource(stream, {
-      inputType: StreamType.Arbitrary,
-    });
+  } else {
+    readStream = await s3.getSoundStream(namePart, folder);
+  }
+  if (readStream) {
+    const { stream, type } = await demuxProbe(readStream);
+    const resource = createAudioResource(stream, { inputType: type });
     player.play(resource);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
-    await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
-  } else {
-    const namePart = getSoundName(soundName);
-    const timePart = getSoundPlaytime(soundName);
-    const readStream = await s3.getSoundStream(namePart, folder);
-    if (readStream) {
-      const { stream, type } = await demuxProbe(readStream);
-      const resource = createAudioResource(stream, { inputType: type });
-      player.play(resource);
-      await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
-      if (timePart) {
-        currentTimeout = setTimeout(() => {
-          player.stop();
-        }, timePart * 1000);
-      }
-      await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
+    if (timePart) {
+      currentTimeout = setTimeout(() => {
+        player.stop();
+      }, timePart * 1000);
     }
+    await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
   }
 }
 
