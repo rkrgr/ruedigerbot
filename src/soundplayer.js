@@ -5,7 +5,9 @@ const {
   entersState,
   demuxProbe,
   AudioPlayerStatus,
+  StreamType,
 } = require("@discordjs/voice");
+const ytdl = require("ytdl-core");
 const s3 = require("./s3database");
 const logger = require("./logger");
 
@@ -18,7 +20,7 @@ const soundQueue = [];
 
 function getSoundName(sound) {
   const soundSplit = sound.split("(");
-  return soundSplit[0];
+  return soundSplit[0].toLowerCase();
 }
 
 function getSoundPlaytime(sound) {
@@ -31,20 +33,33 @@ function getSoundPlaytime(sound) {
 
 async function playSound(soundName, folder) {
   clearTimeout(currentTimeout);
-  const namePart = getSoundName(soundName);
-  const timePart = getSoundPlaytime(soundName);
-  const readStream = await s3.getSoundStream(namePart, folder);
-  if (readStream) {
-    const { stream, type } = await demuxProbe(readStream);
-    const resource = createAudioResource(stream, { inputType: type });
+
+  if (soundName.startsWith("http")) {
+    const stream = ytdl(soundName, {
+      filter: "audioonly",
+    });
+    const resource = createAudioResource(stream, {
+      inputType: StreamType.Arbitrary,
+    });
     player.play(resource);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
-    if (timePart) {
-      currentTimeout = setTimeout(() => {
-        player.stop();
-      }, timePart * 1000);
-    }
     await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
+  } else {
+    const namePart = getSoundName(soundName);
+    const timePart = getSoundPlaytime(soundName);
+    const readStream = await s3.getSoundStream(namePart, folder);
+    if (readStream) {
+      const { stream, type } = await demuxProbe(readStream);
+      const resource = createAudioResource(stream, { inputType: type });
+      player.play(resource);
+      await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
+      if (timePart) {
+        currentTimeout = setTimeout(() => {
+          player.stop();
+        }, timePart * 1000);
+      }
+      await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
+    }
   }
 }
 

@@ -51,7 +51,7 @@ client.on("messageCreate", (message) => {
     .slice(process.env.PREFIX.length)
     .trim()
     .split(/ +/);
-  const command = args.shift().toLowerCase();
+  const command = args.shift();
 
   try {
     if (client.commands.has(command)) {
