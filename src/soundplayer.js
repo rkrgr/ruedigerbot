@@ -44,7 +44,14 @@ async function playSound(soundName, folder) {
   }
   if (readStream) {
     const { stream, type } = await demuxProbe(readStream);
-    const resource = createAudioResource(stream, { inputType: type });
+    const resourceOptions = { inputType: type };
+    if (soundName.startsWith("http")) {
+      resourceOptions.inlineVolume = true;
+    }
+    const resource = createAudioResource(stream, resourceOptions);
+    if (soundName.startsWith("http")) {
+      resource.volume.setVolume(0.3);
+    }
     player.play(resource);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
