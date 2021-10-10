@@ -140,7 +140,6 @@ function addPlaylist(name, sounds) {
   const params = {
     Bucket: S3_BUCKET,
     Key: `playlists/${name.toLowerCase()}.json`,
-    ACL: "public-read",
   };
   params.Body = JSON.stringify(sounds);
 
