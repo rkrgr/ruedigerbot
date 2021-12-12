@@ -33,7 +33,7 @@ module.exports = {
 
         console.log(speakingTime);
 
-        if (speakingTime > 1000 && speakingTime < 5000) {
+        if (speakingTime > 1000 && speakingTime < 4000) {
           const laugh = randLaugh();
           play(message.member.voice.channel, [laugh]);
         }
