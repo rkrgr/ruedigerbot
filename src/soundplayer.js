@@ -113,5 +113,10 @@ async function playFromFile(voiceChannel, file) {
   return connection.play(file);
 }
 
+function isPlaying() {
+  return player.state === AudioPlayerStatus.Playing;
+}
+
 exports.play = play;
 exports.playFromFile = playFromFile;
+exports.isPlaying = isPlaying;

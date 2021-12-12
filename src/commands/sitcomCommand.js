@@ -1,6 +1,6 @@
 const { getVoiceConnection } = require("@discordjs/voice");
 
-const { play } = require("../soundplayer");
+const player = require("../soundplayer");
 
 let on = false;
 
@@ -31,11 +31,9 @@ module.exports = {
         const speakingEnd = Date.now();
         const speakingTime = speakingEnd - speakingStart;
 
-        console.log(speakingTime);
-
-        if (speakingTime > 1000 && speakingTime < 4000) {
+        if (speakingTime > 1000 && speakingTime < 4000 && !player.isPlaying()) {
           const laugh = randLaugh();
-          play(message.member.voice.channel, [laugh]);
+          player.play(message.member.voice.channel, [laugh]);
         }
       }
     });
