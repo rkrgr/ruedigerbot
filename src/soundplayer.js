@@ -32,7 +32,6 @@ function getSoundPlaytime(sound) {
 }
 
 function getPlayer(voiceChannel) {
-  console.log(voiceChannel.id);
   let player = players.get(voiceChannel.id);
   if (!player) {
     player = createAudioPlayer();
@@ -68,7 +67,6 @@ async function playSound(voiceChannel, soundName, folder) {
     }
     const player = getPlayer(voiceChannel);
     player.play(resource);
-    console.log(player);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
       currentTimeout = setTimeout(() => {
@@ -103,6 +101,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
 
   const player = getPlayer(voiceChannel);
   connection.subscribe(player);
+
 
   // clear soundQueue
   soundQueue.splice(0, soundQueue.length);
