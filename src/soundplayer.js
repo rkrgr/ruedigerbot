@@ -9,12 +9,13 @@ const {
 const ytdl = require("ytdl-core");
 const s3 = require("./s3database");
 const logger = require("./logger");
+const { Console } = require("winston/lib/winston/transports");
 
 const TIMEOUT = 300_000;
 let currentTimeout;
 let isPlayingQueue = false;
 
-let player;
+const players = new Map();
 const soundQueue = [];
 
 function getSoundName(sound) {
@@ -30,7 +31,20 @@ function getSoundPlaytime(sound) {
   return null;
 }
 
-async function playSound(soundName, folder) {
+function getPlayer(voiceChannel) {
+  console.log(voiceChannel.id);
+  let player = players.get(voiceChannel.id);
+  if (!player) {
+    player = createAudioPlayer();
+    player.on("error", (error) => {
+      logger.error(error);
+    });
+    players.set(voiceChannel.id, player);
+  }
+  return player;
+}
+
+async function playSound(voiceChannel, soundName, folder) {
   clearTimeout(currentTimeout);
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
@@ -52,7 +66,9 @@ async function playSound(soundName, folder) {
     if (soundName.startsWith("http")) {
       resource.volume.setVolume(0.3);
     }
+    const player = getPlayer(voiceChannel);
     player.play(resource);
+    console.log(player);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
       currentTimeout = setTimeout(() => {
@@ -63,12 +79,12 @@ async function playSound(soundName, folder) {
   }
 }
 
-async function playSoundQueue() {
+async function playSoundQueue(voiceChannel) {
   isPlayingQueue = true;
   if (soundQueue.length) {
     const { soundName, folder } = soundQueue.shift();
-    await playSound(soundName, folder);
-    await playSoundQueue();
+    await playSound(voiceChannel, soundName, folder);
+    await playSoundQueue(voiceChannel);
   } else {
     isPlayingQueue = false;
   }
@@ -85,12 +101,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
     adapterCreator: voiceChannel.guild.voiceAdapterCreator,
   });
 
-  if (!player) {
-    player = createAudioPlayer();
-    player.on("error", (error) => {
-      logger.error(error);
-    });
-  }
+  const player = getPlayer(voiceChannel);
   connection.subscribe(player);
 
   // clear soundQueue
@@ -104,7 +115,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   if (isPlayingQueue) {
     player.stop();
   } else {
-    await playSoundQueue();
+    await playSoundQueue(voiceChannel);
   }
 }
 
@@ -113,8 +124,8 @@ async function playFromFile(voiceChannel, file) {
   return connection.play(file);
 }
 
-function isPlaying() {
-  return player.state === AudioPlayerStatus.Playing;
+function isPlaying(voiceChannel) {
+  return getPlayer(voiceChannel).state === AudioPlayerStatus.Playing;
 }
 
 exports.play = play;

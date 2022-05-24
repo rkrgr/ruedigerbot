@@ -31,7 +31,11 @@ module.exports = {
         const speakingEnd = Date.now();
         const speakingTime = speakingEnd - speakingStart;
 
-        if (speakingTime > 1000 && speakingTime < 4000 && !player.isPlaying()) {
+        if (
+          speakingTime > 1000 &&
+          speakingTime < 4000 &&
+          !player.isPlaying(message.member.voice.channel)
+        ) {
           const laugh = randLaugh();
           player.play(message.member.voice.channel, [laugh]);
         }
