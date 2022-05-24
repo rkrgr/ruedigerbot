@@ -9,7 +9,6 @@ const {
 const ytdl = require("ytdl-core");
 const s3 = require("./s3database");
 const logger = require("./logger");
-const { Console } = require("winston/lib/winston/transports");
 
 const TIMEOUT = 300_000;
 let currentTimeout;
@@ -32,7 +31,6 @@ function getSoundPlaytime(sound) {
 }
 
 function getPlayer(voiceChannel) {
-  console.log(voiceChannel.id);
   let player = players.get(voiceChannel.id);
   if (!player) {
     player = createAudioPlayer();
@@ -68,7 +66,6 @@ async function playSound(voiceChannel, soundName, folder) {
     }
     const player = getPlayer(voiceChannel);
     player.play(resource);
-    console.log(player);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
       currentTimeout = setTimeout(() => {
