@@ -101,7 +101,6 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   const player = getPlayer(voiceChannel);
   connection.subscribe(player);
 
-
   // clear soundQueue
   soundQueue.splice(0, soundQueue.length);
 
@@ -113,7 +112,8 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   if (isPlayingQueue) {
     player.stop();
   } else {
-    await playSoundQueue(voiceChannel);
+    await playSound(voiceChannel, soundNames[0], folder);
+    // await playSoundQueue(voiceChannel);
   }
 }
 
