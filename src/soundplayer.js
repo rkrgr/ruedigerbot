@@ -101,6 +101,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   const player = getPlayer(voiceChannel);
   connection.subscribe(player);
 
+
   // clear soundQueue
   soundQueue.splice(0, soundQueue.length);
 
