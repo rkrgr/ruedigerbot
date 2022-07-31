@@ -16,7 +16,12 @@ module.exports = {
       return;
     }
 
+    if (s3.isSoundExisting(soundName)) {
+      message.reply("A sound with that name already exists.");
+    }
+
     const soundFile = message.attachments.first();
     s3.addSound(soundName, soundFile.url);
+    s3.addSoundToGuild(soundName, message.guildId);
   },
 };

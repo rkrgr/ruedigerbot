@@ -203,6 +203,52 @@ async function deleteEdit(userID) {
   return s3.deleteObject(params).promise();
 }
 
+async function getGuildSounds() {
+  const params = { Bucket: S3_BUCKET, Key: "guildSounds" };
+  const data = await s3.getObject(params).promise();
+  if (!data) {
+    return new Map();
+  }
+  return new Map(JSON.parse(data.Body.toString("utf-8")));
+}
+
+async function getSoundsForGuild(guildId) {
+  const allSounds = await getGuildSounds();
+  const guildSounds = allSounds.get(guildId);
+  if (!guildSounds) {
+    return [];
+  }
+  return guildSounds;
+}
+
+async function addSoundToGuild(soundName, guildId) {
+  const allSounds = await getGuildSounds();
+  let guildSounds = allSounds.get(guildId);
+
+  if (!guildSounds) {
+    guildSounds = [];
+  }
+  if (!guildSounds.includes(soundName)) {
+    guildSounds.push(soundName);
+    allSounds.set(guildId, guildSounds);
+
+    const json = JSON.stringify([...allSounds]);
+
+    const params = { Bucket: S3_BUCKET, Key: "guildSounds", Body: json };
+    s3.putObject(params).promise();
+  }
+}
+
+async function isSoundExisting(soundName) {
+  const params = { Bucket: S3_BUCKET, Key: `sounds/${soundName}` };
+  try {
+    await s3.headObject(params).promise();
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
 exports.getSound = getSound;
 exports.getSoundStream = getSoundStream;
 exports.getSounds = getSounds;
@@ -218,3 +264,6 @@ exports.addEdit = addEdit;
 exports.getEdit = getEdit;
 exports.updateEdit = updateEdit;
 exports.deleteEdit = deleteEdit;
+exports.addSoundToGuild = addSoundToGuild;
+exports.getSoundsForGuild = getSoundsForGuild;
+exports.isSoundExisting = isSoundExisting;
