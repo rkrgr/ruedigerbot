@@ -69,7 +69,7 @@ client.on("messageCreate", (message) => {
 
 client.on("voiceStateUpdate", (oldState, newState) => {
   // quick and dirty only play welcome sounds on Luschenserver
-  if (message.guildId !== 372048536864423936) return;
+  if (newState.guild.id !== "372048536864423936") return;
   if (newState.member.user.bot) return;
   const oldVoice = oldState.channelId;
   const newVoice = newState.channelId;
