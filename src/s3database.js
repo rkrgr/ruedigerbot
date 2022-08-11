@@ -242,11 +242,14 @@ async function addSoundToGuild(soundName, guildId) {
 async function isSoundExisting(soundName) {
   const params = { Bucket: S3_BUCKET, Key: `sounds/${soundName}` };
   try {
-    await s3.headObject(params).promise();
+    const res = await s3.headObject(params).promise();
+    if (res) {
+      return true;
+    }
+    return false;
   } catch (error) {
     return false;
   }
-  return true;
 }
 
 exports.getSound = getSound;
