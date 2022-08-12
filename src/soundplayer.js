@@ -46,24 +46,12 @@ async function playSound(voiceChannel, soundName, folder) {
   clearTimeout(currentTimeout);
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
-  let readStream;
-  if (soundName.startsWith("http")) {
-    readStream = ytdl(soundName, {
-      filter: "audioonly",
-    });
-  } else {
-    readStream = await s3.getSoundStream(namePart, folder);
-  }
+  const readStream = await s3.getSoundStream(namePart, folder);
+
   if (readStream) {
     const { stream, type } = await demuxProbe(readStream);
     const resourceOptions = { inputType: type };
-    if (soundName.startsWith("http")) {
-      resourceOptions.inlineVolume = true;
-    }
     const resource = createAudioResource(stream, resourceOptions);
-    if (soundName.startsWith("http")) {
-      resource.volume.setVolume(0.3);
-    }
     const player = getPlayer(voiceChannel);
     player.play(resource);
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
