@@ -37,11 +37,11 @@ class Scene7 {
   }
 
   async play() {
-    /* await soundplayer.play(
+    await soundplayer.play(
       this.voiceChannel,
       ["schrottplatz_anfang"],
       "sounds_adventure/teil1"
-    ); */
+    );
     // this.connection = await this.voiceChannel.join();
     this.beepActive = true;
     this.playBeepLoop();
