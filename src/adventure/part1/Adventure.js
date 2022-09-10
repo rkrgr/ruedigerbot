@@ -32,6 +32,12 @@ class Adventure {
     }
   }
 
+  abort() {
+    if (this.activeScene && this.activeScene.abort) {
+      this.activeScene.abort();
+    }
+  }
+
   computeInput(message) {
     this.activeScene.computeInput(message);
   }

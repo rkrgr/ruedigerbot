@@ -34,6 +34,7 @@ class Scene7 {
     this.pos = [12, 5];
     this.dir = [-1, 0];
     this.currentTarget = obstacle1Pos;
+    this.beepActive = true;
   }
 
   async play() {
@@ -42,9 +43,11 @@ class Scene7 {
       ["schrottplatz_anfang"],
       "sounds_adventure/teil1"
     );
-    // this.connection = await this.voiceChannel.join();
-    this.beepActive = true;
     this.playBeepLoop();
+  }
+
+  abort() {
+    this.beepActive = false;
   }
 
   async computeInput(message) {

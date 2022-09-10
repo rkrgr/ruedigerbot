@@ -20,6 +20,12 @@ class Scene8 {
     }, 20000);
   }
 
+  abort() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
   async computeInput(message) {
     if (message === "5 2 1 8 6") {
       if (this.intervalId) {

@@ -12,6 +12,9 @@ function adventureIsActive() {
 }
 
 function start(voiceChannel, textChannel, adventureName, numOfScene = 1) {
+  if (adventure) {
+    adventure.abort();
+  }
   adventure = new (require(`./${adventureName}/Adventure`))(
     voiceChannel,
     textChannel
