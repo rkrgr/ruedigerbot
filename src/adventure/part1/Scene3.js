@@ -15,7 +15,8 @@ class Scene3 {
     );
 
     this.textChannel.send({
-      content: "Form der Eingabe: 1 2 3",
+      content:
+        "Form der Eingabe: 1 2 3\nIch habe mir neue Öfen für die Backstube gekauft. Die neuen Öfen laufen auf Gas. Ich würde gerne das vorhandene Rohrsystem im Keller verwenden, um nicht nur Wasser zu den Wasserhähnen zu transportieren, sondern auch Gas zu den Öfen. Wasser und Gas darf sich natürlich nicht vermischen. Deswegen muss an bestimmten Stellen ein Ventil angebracht werden, um die Verbindung dort zu trennen. Ich habe allerdings nur drei Ventile. Kannst du mir sagen, wo ich die drei Ventile anbringen soll?",
       files: [
         {
           attachment: `${__dirname}/rohrrätsel.png`,
