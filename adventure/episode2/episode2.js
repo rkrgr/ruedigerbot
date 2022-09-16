@@ -9,11 +9,13 @@ module.exports = class Episode2 {
 	start() {
 		this.play(this.voiceChannel, __dirname + '/anfang.mp3');
 		setTimeout(() => {
-			this.textChannel.send('', {
-				files: [{
-					attachment: __dirname + '/rüdiger.jpg',
-					name: 'rüdiger.jpg',
-				}],
+			this.textChannel.send({
+				files: [
+				  {
+					attachment: `${__dirname}/rüdiger.jpg`,
+					name: "rüdiger.jpg",
+				  }
+				]
 			});
 		}, 28000);
 		setTimeout(() => {
@@ -79,71 +81,71 @@ module.exports = class Episode2 {
 		if(command == 'power torpedo') {
 			this.play(this.voiceChannel, __dirname + '/aufzugAnfang.mp3');
 			setTimeout(() => {
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/zahlenfeld.png',
+						attachment: `${__dirname}/zahlenfeld.png`,
 						name: 'zahlenfeld.png',
 					}],
 				});
 			}, 4000);
 			setTimeout(() => {
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto1.png',
+						attachment: `${__dirname}/Foto1.png`,
 						name: 'Foto1.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto4.png',
+						attachment: `${__dirname}/Foto4.png`,
 						name: 'Foto4.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto9.png',
+						attachment: `${__dirname}/Foto9.png`,
 						name: 'Foto9.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto2.png',
+						attachment: `${__dirname}/Foto2.png`,
 						name: 'Foto2.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto10.png',
+						attachment: `${__dirname}/Foto10.png`,
 						name: 'Foto10.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto3.png',
+						attachment: `${__dirname}/Foto3.png`,
 						name: 'Foto3.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto5.png',
+						attachment: `${__dirname}/Foto5.png`,
 						name: 'Foto5.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto8.png',
+						attachment: `${__dirname}/Foto8.png`,
 						name: 'Foto8.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto6.png',
+						attachment: `${__dirname}/Foto6.png`,
 						name: 'Foto6.png',
 					}],
 				});
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/Foto7.png',
+						attachment: `${__dirname}/Foto7.png`,
 						name: 'Foto7.png',
 					}],
 				});
@@ -152,9 +154,9 @@ module.exports = class Episode2 {
 		if(command == '5 3 0 8 1 7 6 2 7 5') {
 			this.play(this.voiceChannel, __dirname + '/aufzugFahrt1.mp3');
 			setTimeout(() => {
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/kreuzworträtsel.jpg',
+						attachment: `${__dirname}/kreuzworträtsel.jpg`,
 						name: 'kreuzworträtsel.jpg',
 					}],
 				});
@@ -166,9 +168,9 @@ module.exports = class Episode2 {
 		if(command == 'hold op') {
 			this.play(this.voiceChannel, __dirname + '/aufzugAusgang.mp3');
 			setTimeout(() => {
-				this.textChannel.send('', {
+				this.textChannel.send({
 					files: [{
-						attachment: __dirname + '/deckel.png',
+						attachment: `${__dirname}/deckel.png`,
 						name: 'deckel.png',
 					}],
 				});
