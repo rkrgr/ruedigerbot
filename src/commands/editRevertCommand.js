@@ -1,4 +1,4 @@
-const fs = require("fs");
+/*const fs = require("fs");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 
@@ -72,3 +72,4 @@ module.exports = {
     s3.updateEdit(message.author.id, edit.actions);
   },
 };
+*/

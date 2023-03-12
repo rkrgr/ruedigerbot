@@ -1,4 +1,4 @@
-const { Collection, Client, Intents } = require("discord.js");
+const { Collection, Client, GatewayIntentBits } = require("discord.js");
 const dotenv = require("dotenv");
 const requireAll = require("require-all");
 const logger = require("./src/logger");
@@ -14,9 +14,10 @@ const { play } = require("./src/soundplayer");
 
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-    Intents.FLAGS.GUILD_MESSAGES,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent,
   ],
 });
 client.commands = new Collection();
