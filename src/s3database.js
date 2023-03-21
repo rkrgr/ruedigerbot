@@ -1,7 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const AWS = require("aws-sdk");
+const ffmpegStatic = require("ffmpeg-static");
 const ffmpeg = require("fluent-ffmpeg");
+
 const normalize = require("ffmpeg-normalize");
 const logger = require("./logger");
 
@@ -13,6 +15,9 @@ const s3 = new AWS.S3({
   accessKeyId: S3_ACCESS_KEY_ID,
   secretAccessKey: S3_SECRET_ACCESS_KEY,
 });
+
+// Tell fluent-ffmpeg where it can find FFmpeg
+ffmpeg.setFfmpegPath(ffmpegStatic);
 
 async function getSound(soundName, folder) {
   const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}.mp3` };
