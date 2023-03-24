@@ -16,9 +16,12 @@ module.exports = {
         });
     } else {
       const sounds = await s3.getSoundsForGuild(message.guildId);
-      sounds.sort().forEach((sound) => {
-        commands += `${sound}, `;
-      });
+      sounds
+        .map((sound) => sound.toLowerCase())
+        .sort()
+        .forEach((sound) => {
+          commands += `${sound}, `;
+        });
     }
 
     commands = commands.substring(0, commands.length - 2);
