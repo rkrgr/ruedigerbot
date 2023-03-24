@@ -8,6 +8,7 @@ module.exports = {
     if (args && args[0] === "all") {
       const sounds = await s3.getSounds("sounds");
       sounds
+        .sort()
         .filter((sound) => !sound.Key.endsWith("/"))
         .map((sound) => sound.Key.split("/")[1].split(".")[0])
         .forEach((sound) => {
@@ -15,7 +16,7 @@ module.exports = {
         });
     } else {
       const sounds = await s3.getSoundsForGuild(message.guildId);
-      sounds.forEach((sound) => {
+      sounds.sort().forEach((sound) => {
         commands += `${sound}, `;
       });
     }
