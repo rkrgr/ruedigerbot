@@ -16,10 +16,13 @@ module.exports = {
           messages[0] += `${sound}, `;
         });
     } else {
-      const sounds = await s3.getSoundsForGuild(message.guildId);
+      // add if guild specific sounds are needed
+      // const sounds = await s3.getSoundsForGuild(message.guildId);
+      const sounds = await s3.getSounds("sounds");
 
       sounds
-        .map((sound) => sound.toLowerCase())
+        .filter((sound) => !sound.Key.endsWith("/"))
+        .map((sound) => sound.Key.split("/")[1].split(".")[0].toLowerCase())
         .sort()
         .forEach((sound) => {
           if (messages[0].length + sound.length + 2 < 2000) {
