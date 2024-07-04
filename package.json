@@ -22,7 +22,7 @@
     "@aws-sdk/lib-storage": "^3.504.0",
     "@aws-sdk/s3-request-presigner": "^3.504.0",
     "@discordjs/voice": "^0.15.0",
-    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "aws-sdk": "^2.868.0",
     "axios": "^1.6.7",
     "discord.js": "^14.7.1",

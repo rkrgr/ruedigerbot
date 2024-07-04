@@ -15,9 +15,9 @@ const {
   PutObjectCommand
 } = require("@aws-sdk/client-s3");
 
-const ffmpegStatic = require("ffmpeg-static");
-const ffmpeg = require("fluent-ffmpeg");
-
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const normalize = require("ffmpeg-normalize");
 const logger = require("./logger");
@@ -34,9 +34,6 @@ const s3 = new S3({
   region: "eu-central-1",
 });
 
-// Tell fluent-ffmpeg where it can find FFmpeg
-//ffmpeg.setFfmpegPath(ffmpegStatic);
-ffmpeg.setFfmpegPath('C:\\dev\\ffmpeg\\bin\\ffmpeg.exe');
 
 async function getSound(soundName, folder) {
   const params = { Bucket: S3_BUCKET, Key: `${folder}/${soundName}.mp3` };
