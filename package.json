@@ -12,7 +12,7 @@
   "author": "Sackopeppler",
   "license": "ISC",
   "engines": {
-    "node": "16.x"
+    "node": "20.x"
   },
   "jest": {
     "clearMocks": true
