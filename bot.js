@@ -34,7 +34,7 @@ Object.keys(commands).forEach((commandName) => {
 
 const adventure = require("./src/adventure/adventureController");
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   wednesdaySchedule(client.user);
   logger.info("Ready!");
 });

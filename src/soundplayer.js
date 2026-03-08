@@ -5,6 +5,7 @@ const {
   entersState,
   demuxProbe,
   AudioPlayerStatus,
+  StreamType,
 } = require("@discordjs/voice");
 const ytdl = require("ytdl-core");
 const s3 = require("./s3database");
@@ -37,23 +38,27 @@ function getPlayer(voiceChannel) {
     player.on("error", (error) => {
       logger.error(error);
     });
+    player.on("debug", console.log);
     players.set(voiceChannel.id, player);
   }
   return player;
 }
 
-async function playSound(voiceChannel, soundName, folder) {
+/*async function playSound(voiceChannel, soundName, folder) {
   clearTimeout(currentTimeout);
   const namePart = getSoundName(soundName);
   const timePart = getSoundPlaytime(soundName);
   const readStream = await s3.getSoundStream(namePart, folder);
 
   if (readStream) {
-    const { stream, type } = await demuxProbe(readStream);
-    const resourceOptions = { inputType: type };
-    const resource = createAudioResource(stream, resourceOptions);
+    readStream.resume();
+    const resource = createAudioResource(readStream, {
+      inputType: StreamType.OggOpus
+    });
     const player = getPlayer(voiceChannel);
+
     player.play(resource);
+
     await entersState(player, AudioPlayerStatus.Playing, TIMEOUT);
     if (timePart) {
       currentTimeout = setTimeout(() => {
@@ -62,7 +67,7 @@ async function playSound(voiceChannel, soundName, folder) {
     }
     await entersState(player, AudioPlayerStatus.Idle, TIMEOUT);
   }
-}
+}*/
 
 async function playSoundQueue(voiceChannel) {
   isPlayingQueue = true;
@@ -76,9 +81,9 @@ async function playSoundQueue(voiceChannel) {
 }
 
 async function play(voiceChannel, soundNamesIn, folder = "sounds") {
-  const playlistName = soundNamesIn[0];
+  /*const playlistName = soundNamesIn[0];
   const playlist = await s3.getPlaylist(playlistName);
-  const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;
+  const soundNames = playlist ? JSON.parse(playlist) : soundNamesIn;*/
 
   const connection = joinVoiceChannel({
     channelId: voiceChannel.id,
@@ -86,10 +91,31 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
     adapterCreator: voiceChannel.guild.voiceAdapterCreator,
   });
 
-  const player = getPlayer(voiceChannel);
+  connection.on("debug", console.log);
+  connection.on("error", console.error);
+
+  //const player = getPlayer(voiceChannel);
+  const player = createAudioPlayer();
+
+  player.on(AudioPlayerStatus.Playing, () => {
+    console.log('The audio player has started playing!');
+  });
+
+  player.on('error', (error) => {
+    console.error(`Error: ${error.message} with resource ${error.resource.metadata.title}`);
+    player.play(getNextResource());
+  });
+
+  const resource = createAudioResource('/home/peckopablo/git_repos/ruedigerbot/kackwurst.mp3');
+  console.log(resource)
+  player.play(resource);
+
+
   connection.subscribe(player);
 
-  // clear soundQueue
+
+
+  /*// clear soundQueue
   soundQueue.splice(0, soundQueue.length);
 
   // eslint-disable-next-line no-restricted-syntax
@@ -102,7 +128,7 @@ async function play(voiceChannel, soundNamesIn, folder = "sounds") {
   } else {
     await playSound(voiceChannel, soundNames[0], folder);
     // await playSoundQueue(voiceChannel);
-  }
+  }*/
 }
 
 async function playFromFile(voiceChannel, file) {
