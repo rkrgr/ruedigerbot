@@ -34,6 +34,8 @@ for (const folder of commandFolders) {
     }
 }
 
+let files = null;
+
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isAutocomplete()) {
         const command = client.commands.get(interaction.commandName);
@@ -41,11 +43,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
         const focusedValue = interaction.options.getFocused();
         const folderPath = './media/sounds';
-        const files = fs.readdirSync(folderPath)
-        .filter(f => f.endsWith('.ogg'))
-        .map(f => f.replace(/\.ogg$/, ''));
-        files.push('random');
-        files.sort();
+        if (files === null) {
+            files = fs.readdirSync(folderPath)
+                .filter(f => f.endsWith('.ogg'))
+                .map(f => f.replace(/\.ogg$/, ''));
+
+            files.push('random');
+            files.sort();
+        }
+
         const filtered = files.filter(f => f.includes(focusedValue)).slice(0, 25);
 
         await interaction.respond(
