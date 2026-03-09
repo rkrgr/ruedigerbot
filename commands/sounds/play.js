@@ -20,7 +20,7 @@ async function play(channel, soundname, times) {
     }
 
     // Create connection only if not already connected
-    if (!currentConnection) {
+    if (!currentConnection || channel.id != currentConnection.joinConfig.channelId) {
         currentConnection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
