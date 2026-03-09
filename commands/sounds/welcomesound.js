@@ -4,7 +4,8 @@ const fs = require('fs');
 module.exports = {
     data: new SlashCommandBuilder().setName('welcomesound').setDescription('Set a welcome sound').addStringOption((option) => option.setName("soundname")
                                                                                                                                     .setDescription("Name of the sound")
-                                                                                                                                    .setRequired(true)),
+                                                                                                                                    .setRequired(true)
+                                                                                                                                    .setAutocomplete(true)),
     async execute(interaction) {
         const soundname = interaction.options.getString("soundname");
 
