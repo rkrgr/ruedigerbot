@@ -104,6 +104,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                   member: newState.member,
                   options: {
                       getString: () => soundname,
+                      getInteger: () => 1,
                   },
                   reply: async (msg) => console.log("Bot would reply:", msg),
                 };
