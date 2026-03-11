@@ -92,24 +92,19 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     const newVoice = newState.channelId;
 
     if (oldVoice == null && newVoice != null) {
-        if (new Date().getDay() === 3) {
-            // on wednesday
-            play(newState.member.voice.channel, ["wednesday"]);
-        } else {
-            let data = JSON.parse(fs.readFileSync('welcomesounds.json', 'utf8'));
-            let soundname = data[newState.member.id];
-            if (soundname) {
-                let command = client.commands.get("play");
-                let interaction = {
-                  member: newState.member,
-                  options: {
-                      getString: () => soundname,
-                      getInteger: () => 1,
-                  },
-                  reply: async (msg) => console.log("Bot would reply:", msg),
-                };
-                command.execute(interaction);
-            }
+        let data = JSON.parse(fs.readFileSync('welcomesounds.json', 'utf8'));
+        let soundname = data[newState.member.id];
+        if (soundname) {
+            let command = client.commands.get("play");
+            let interaction = {
+              member: newState.member,
+              options: {
+                  getString: () => soundname,
+                  getInteger: () => 1,
+              },
+              reply: async (msg) => console.log("Bot would reply:", msg),
+            };
+            command.execute(interaction);
         }
     }
 });
